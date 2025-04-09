@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Instant Interview Assistant</title>
-  <link rel="stylesheet" href="./CSS/base.css">
-  <link rel="stylesheet" href="./CSS/styles.css">
-  <link rel="stylesheet" href="./CSS/dashboard.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
-  <script id="supabaseScript" src="./js/supabase.min.js"></script>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <script id="supabaseScript" src="/js/supabase.min.js"></script>
 </head>
 <body>
   <div class="dashboard-wrapper">
@@ -24,15 +24,15 @@
         <button id="sidebarToggle" class="sidebar-toggle">☰</button>
       </div>
       <ul class="sidebar-nav">
-        <li class="nav-item active" data-href="./dashboard.html">Dashboard</li>
-        <li class="nav-item" data-href="./live-interview.html">Live Interview</li>
-        <li class="nav-item" data-href="./resume-upload.html">Resume Upload</li>
-        <li class="nav-item" data-href="./progress.html">Progress</li>
+        <li class="nav-item active" data-href="/dashboard.html">Dashboard</li>
+        <li class="nav-item" data-href="/live-interview.html">Live Interview</li>
+        <li class="nav-item" data-href="/resume-upload.html">Resume Upload</li>
+        <li class="nav-item" data-href="/progress.html">Progress</li>
         <li class="nav-item" id="themeToggle">Toggle Dark Mode</li>
       </ul>
       <div class="sidebar-footer">
         <div class="user-info" id="sidebarUserInfo">
-          <span class="material-icons profile-icon" id="profileIcon" data-href="./profile-settings.html">person</span>
+          <span class="material-icons profile-icon" id="profileIcon" data-href="/profile-settings.html">person</span>
           <span id="sidebarUserName" class="user-name">Loading...</span>
         </div>
       </div>
@@ -76,9 +76,9 @@
         <section class="quick-links-card article-card">
           <h2>Get Started</h2>
           <div class="quick-links-content">
-            <button class="link-btn" data-href="./live-interview.html">Start Live Interview</button>
-            <button class="link-btn" data-href="./resume-upload.html">Upload Resume</button>
-            <button class="link-btn" data-href="./progress.html">View Progress</button>
+            <button class="link-btn" data-href="/live-interview.html">Start Live Interview</button>
+            <button class="link-btn" data-href="/resume-upload.html">Upload Resume</button>
+            <button class="link-btn" data-href="/progress.html">View Progress</button>
           </div>
         </section>
       </div>
@@ -86,16 +86,16 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="./js/auth.js"></script>
-  <script src="./js/ui.js"></script>
-  <script src="./js/storage.js"></script>
-  <script src="./js/utils.js"></script>
-  <script src="./js/script.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/storage.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/script.js"></script>
   <script>
     console.log('dashboard.html script loaded');
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
+      navigator.serviceWorker.register('/sw.js')
         .then(() => console.log('Service worker registered'))
         .catch(err => console.error('Service worker registration failed:', err));
     }
@@ -106,14 +106,21 @@
       // Initialize authentication and fetch user data
       try {
         initializeAuth();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const userName = user.user_metadata?.full_name || user.email.split('@')[0] || 'User';
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.error('Error checking session:', sessionError.message);
+        } else if (session) {
+          console.log('Session found on load:', session);
+          const userName = session.user.user_metadata?.full_name || session.user.email.split('@')[0] || 'User';
           document.getElementById('welcomeUserName').textContent = userName;
           document.getElementById('sidebarUserName').textContent = userName;
+        } else {
+          console.log('No session found, redirecting to login');
+          window.location.href = '/login.html';
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error initializing auth:', error);
+        window.location.href = '/login.html';
       }
 
       // Sidebar toggle

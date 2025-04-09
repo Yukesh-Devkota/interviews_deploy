@@ -15,7 +15,6 @@
 </head>
 <body>
   <div class="dashboard-wrapper">
-    <!-- White-Themed Sidebar -->
     <nav class="sidebar">
       <div class="sidebar-header">
         <div class="logo">
@@ -40,16 +39,12 @@
     <div class="sidebar-icon" id="sidebarIcon">
       <span>☰</span>
     </div>
-
-    <!-- Main Content -->
     <main class="main-content">
       <div class="container">
         <header class="header">
           <h1>Welcome, <span id="welcomeUserName">User</span>!</h1>
           <p class="subtitle">Your personalized hub for interview success.</p>
         </header>
-        
-        <!-- Article Section -->
         <section class="article-card">
           <h2>About Instant Interview Assistant</h2>
           <div class="article-content">
@@ -58,8 +53,6 @@
             <p>What sets us apart is our focus on simplicity and impact. The sleek sidebar navigation keeps everything at your fingertips, while vibrant gradients and smooth transitions make every interaction engaging. Whether you’re a first-time job seeker or a seasoned professional, Instant Interview Assistant is here to elevate your preparation to the next level.</p>
           </div>
         </section>
-
-        <!-- Tips Section -->
         <section class="tips-card article-card">
           <h2>Quick Interview Tips</h2>
           <div class="tips-content">
@@ -71,8 +64,6 @@
             </ul>
           </div>
         </section>
-
-        <!-- Quick Links Section -->
         <section class="quick-links-card article-card">
           <h2>Get Started</h2>
           <div class="quick-links-content">
@@ -84,8 +75,6 @@
       </div>
     </main>
   </div>
-
-  <!-- JavaScript -->
   <script src="/js/auth.js"></script>
   <script src="/js/ui.js"></script>
   <script src="/js/storage.js"></script>
@@ -93,70 +82,37 @@
   <script src="/js/script.js"></script>
   <script>
     console.log('dashboard.html script loaded');
-
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(() => console.log('Service worker registered'))
         .catch(err => console.error('Service worker registration failed:', err));
     }
-
     document.addEventListener('DOMContentLoaded', async () => {
       console.log('DOM fully loaded in dashboard.html');
-
-      // Initialize authentication and fetch user data
-      try {
-        initializeAuth();
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) {
-          console.error('Error checking session:', sessionError.message);
-        } else if (session) {
-          console.log('Session found on load:', session);
-          const userName = session.user.user_metadata?.full_name || session.user.email.split('@')[0] || 'User';
-          document.getElementById('welcomeUserName').textContent = userName;
-          document.getElementById('sidebarUserName').textContent = userName;
-        } else {
-          console.log('No session found, redirecting to login');
-          window.location.href = '/login.html';
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        window.location.href = '/login.html';
-      }
-
-      // Sidebar toggle
+      initializeAuth(); // Handled by auth.js
       const sidebar = document.querySelector('.sidebar');
       const sidebarToggle = document.getElementById('sidebarToggle');
       const sidebarIcon = document.getElementById('sidebarIcon');
-      
       sidebarToggle.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
         sidebarIcon.classList.toggle('visible');
         document.querySelector('.main-content').classList.toggle('full');
       });
-
       sidebarIcon.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
         sidebarIcon.classList.toggle('visible');
         document.querySelector('.main-content').classList.toggle('full');
       });
-
-      // Navigation (including profile icon)
       document.querySelectorAll('.nav-item, .profile-icon').forEach(item => {
         const href = item.getAttribute('data-href');
-        if (href) {
-          item.addEventListener('click', () => window.location.href = href);
-        }
+        if (href) item.addEventListener('click', () => window.location.href = href);
       });
-
-      // Dark mode toggle
       const themeToggle = document.getElementById('themeToggle');
       themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark');
         localStorage.setItem('darkMode', document.body.classList.contains('dark'));
       });
-      if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark');
-      }
+      if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark');
     });
   </script>
 </body>

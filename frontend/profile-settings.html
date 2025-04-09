@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Settings - Instant Interview Assistant</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <script id="supabaseScript" src="/js/supabase.min.js"></script>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <h2>Interview Assistant</h2>
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="nav-item" data-href="/dashboard.html">Dashboard</li>
+        <li class="nav-item" data-href="/live-interview.html">Live Interview</li>
+        <li class="nav-item" data-href="/resume-upload.html">Resume Upload</li>
+        <li class="nav-item" data-href="/progress.html">Progress</li>
+        <li class="nav-item" id="themeToggle">Toggle Dark Mode</li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="user-info" id="sidebarUserInfo">
+          <span class="material-icons profile-icon" id="profileIcon">person</span>
+          <span id="sidebarUserName" class="user-name">Loading...</span>
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-icon" id="sidebarIcon">
+      <span>☰</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <header class="header">
+          <h1>Profile Settings</h1>
+          <p class="subtitle">Manage your account details</p>
+        </header>
+
+        <!-- Profile Settings Form -->
+        <section class="profile-settings-card article-card">
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input type="text" id="fullName" class="input-field" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="input-field" placeholder="Your email" disabled>
+            </div>
+            <div class="form-group">
+              <label for="bio" class="form-label">Bio (Optional)</label>
+              <textarea id="bio" class="input-field" rows="4" placeholder="Tell us about yourself"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="action-btn save-btn">Save Changes</button>
+              <button type="button" id="logoutBtn" class="action-btn logout-btn">Logout</button>
+            </div>
+          </form>
+          <p id="formFeedback" class="feedback"></p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="/js/auth.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/storage.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/script.js"></script>
+  <script>
+    console.log('profile-settings.html script loaded');
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('Service worker registered'))
+        .catch(err => console.error('Service worker registration failed:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('DOM fully loaded in profile-settings.html');
+
+      // Initialize authentication and fetch user data
+      try {
+        initializeAuth();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const userName = user.user_metadata?.full_name || user.email.split('@')[0] || 'User';
+          const userEmail = user.email || 'No email provided';
+          document.getElementById('sidebarUserName').textContent = userName;
+          document.getElementById('fullName').value = userName;
+          document.getElementById('email').value = userEmail;
+          // Fetch bio if stored in Supabase (assuming a 'profiles' table)
+          const { data: profile } = await supabase.from('profiles').select('bio').eq('id', user.id).single();
+          if (profile?.bio) document.getElementById('bio').value = profile.bio;
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        document.getElementById('formFeedback').textContent = 'Failed to load profile: ' + error.message;
+        document.getElementById('formFeedback').style.color = 'var(--accent-color)';
+      }
+
+      // Sidebar toggle
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebarIcon = document.getElementById('sidebarIcon');
+      
+      sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        sidebarIcon.classList.toggle('visible');
+        document.querySelector('.main-content').classList.toggle('full');
+      });
+
+      sidebarIcon.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        sidebarIcon.classList.toggle('visible');
+        document.querySelector('.main-content').classList.toggle('full');
+      });
+
+      // Navigation
+      document.querySelectorAll('.nav-item').forEach(item => {
+        const href = item.getAttribute('data-href');
+        if (href) {
+          item.addEventListener('click', () => window.location.href = href);
+        }
+      });
+
+      // Profile form submission
+      const profileForm = document.getElementById('profileForm');
+      profileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fullName = document.getElementById('fullName').value;
+        const bio = document.getElementById('bio').value;
+        const feedback = document.getElementById('formFeedback');
+
+        try {
+          await supabase.auth.updateUser({ data: { full_name: fullName } });
+          const { data: { user } } = await supabase.auth.getUser();
+          await supabase.from('profiles').upsert({ id: user.id, bio });
+          feedback.textContent = 'Profile updated successfully!';
+          feedback.style.color = '#28a745';
+          document.getElementById('sidebarUserName').textContent = fullName;
+        } catch (error) {
+          feedback.textContent = 'Error updating profile: ' + error.message;
+          feedback.style.color = 'var(--accent-color)';
+          console.error('Profile update error:', error);
+        }
+      });
+
+      // Logout button
+      const logoutBtn = document.getElementById('logoutBtn');
+      logoutBtn.addEventListener('click', () => {
+        supabase.auth.signOut()
+          .then(() => {
+            console.log('Logged out successfully');
+            window.location.href = '/index.html';
+          })
+          .catch(err => {
+            console.error('Logout failed:', err);
+            document.getElementById('formFeedback').textContent = 'Logout failed: ' + err.message;
+            document.getElementById('formFeedback').style.color = 'var(--accent-color)';
+          });
+      });
+    });
+  </script>
+</body>
+</html>

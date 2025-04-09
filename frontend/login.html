@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Instant Interview Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css"> <!-- Global styles with variables -->
+  <link rel="stylesheet" href="/css/login.css">  <!-- Page-specific styles -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script id="supabaseScript" src="/js/supabase.min.js"></script>
+</head>
+<body>
+  <div class="main-content">
+    <div class="hero-bg">
+      <div class="glassy-overlay"></div>
+    </div>
+    <div class="container">
+      <header class="login-header">
+        <h1>Login to Instant Interview Assistant</h1>
+        <p class="hero-subtitle">Unlock Your Interview Prep Journey</p>
+      </header>
+      <div class="login-form">
+        <!-- Email Login Form -->
+        <div class="email-form">
+          <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" class="modern-input" autocomplete="email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" class="modern-input" autocomplete="current-password" placeholder="Enter your password" required>
+          </div>
+          <button id="submitEmailLogin" class="action-btn sign-in-btn">Sign In</button>
+          <p id="loginError" class="feedback"></p>
+        </div>
+        <!-- Google Login Option -->
+        <div class="login-options">
+          <p class="alternative-text">Or sign in with:</p>
+          <button id="googleLoginBtn" class="action-btn google-btn">
+            <span class="material-icons google-icon">google</span> Google
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/auth.js"></script>
+  <script>
+    console.log('login.html script loaded');
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('Service worker registered'))
+        .catch(err => console.error('Service worker registration failed:', err));
+    }
+  </script>
+</body>
+</html>

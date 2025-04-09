@@ -1,0 +1,15 @@
+{
+    "name": "Instant Interview Assistant",
+    "short_name": "Interview",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f0f2f5",
+    "theme_color": "#3498db",
+    "icons": [
+      {
+        "src": "assets/favicon.ico",
+        "sizes": "64x64",
+        "type": "image/x-icon"
+      }
+    ]
+  }

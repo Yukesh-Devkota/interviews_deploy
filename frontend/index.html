@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant Interview Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css"> <!-- Global CSS -->
+  <link rel="stylesheet" href="/css/index.css">  <!-- Page-specific CSS -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div class="main-content">
+    <div class="hero-bg">
+      <div class="glassy-overlay"></div>
+    </div>
+    <div class="container">
+      <!-- Hero Section -->
+      <header class="hero-section">
+        <div class="hero-content">
+          <h1>Instant Interview Assistant</h1>
+          <p class="hero-subtitle">Your AI-Powered Path to Interview Success</p>
+          <button class="action-btn get-started-btn" id="getStartedBtn">Get Started</button>
+        </div>
+      </header>
+
+      <!-- Article Section -->
+      <section class="article-section">
+        <h2>Prepare Smarter, Interview Better</h2>
+        <div class="article-content">
+          <p>At Instant Interview Assistant, we redefine interview preparation with cutting-edge AI technology. Whether you’re a seasoned professional or just starting out, our tools are designed to help you shine:</p>
+          <ul>
+            <li><strong>Real-Time Practice:</strong> Simulate interviews with speech recognition and instant feedback.</li>
+            <li><strong>Personalized Questions:</strong> Tailored to your resume and job role for a custom experience.</li>
+            <li><strong>Progress Tracking:</strong> Monitor your growth with detailed insights and analytics.</li>
+          </ul>
+          <p>Join thousands who’ve transformed their interview skills. Your dream job awaits—start now!</p>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="features-section">
+        <h2>Why Choose Us?</h2>
+        <div class="feature-cards">
+          <div class="feature-card">
+            <div class="feature-icon">🎙️</div>
+            <h3>Live Interview Practice</h3>
+            <p>Practice in real-time with AI-driven feedback to perfect your responses.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3>Personalized Experience</h3>
+            <p>Get questions crafted just for you based on your unique profile.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Track Your Progress</h3>
+            <p>See your improvement with a sleek dashboard and session history.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Call-To-Action Section -->
+      <section class="cta-section">
+        <h2>Ready to Ace Your Interview?</h2>
+        <button class="action-btn" id="startInterviewBtn">Start Live Interview</button>
+      </section>
+    </div>
+  </div>
+
+  <script src="/js/ui.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM fully loaded');
+      const getStartedBtn = document.getElementById('getStartedBtn');
+      const startInterviewBtn = document.getElementById('startInterviewBtn');
+
+      if (getStartedBtn) {
+        getStartedBtn.addEventListener('click', () => {
+          console.log('Get Started button clicked');
+          window.location.href = '/login.html';
+        });
+        getStartedBtn.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          console.log('Get Started button touched');
+          window.location.href = '/login.html';
+        });
+      }
+
+      if (startInterviewBtn) {
+        startInterviewBtn.addEventListener('click', () => {
+          console.log('Start Interview button clicked');
+          window.location.href = '/login.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

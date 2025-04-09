@@ -153,7 +153,7 @@ function setupLoginButtonsWithError() {
   const emailLoginBtn = document.getElementById('emailLoginBtn');
   const emailForm = document.getElementById('emailForm');
   if (emailLoginBtn && emailForm) {
-    emailLoginBtn.addEventListener('click′, () => {
+    emailLoginBtn.addEventListener('click', () => {
       emailForm.style.display = emailForm.style.display === 'none' ? 'flex' : 'none';
     });
   }

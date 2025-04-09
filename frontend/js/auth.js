@@ -35,8 +35,8 @@ async function initializeSupabase() {
   console.log('Attempting to initialize Supabase...');
   try {
     supabase = window.supabase.createClient(
-      'https://fadrnmgjulvdoymevqhf.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZHJubWdqdWx2ZG95bWV2cWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5OTA3NzEsImV4cCI6MjA1ODU2Njc3MX0.XvyVNkjvTiVA5i0Abs1WIIhY-5i9fXfoxMrgIiuoOsA'
+      process.env.SUPABASE_URL || 'https://fadrnmgjulvdoymevqhf.supabase.co',
+      process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZHJubWdqdWx2ZG95bWV2cWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5OTA3NzEsImV4cCI6MjA1ODU2Njc3MX0.XvyVNkjvTiVA5i0Abs1WIIhY-5i9fXfoxMrgIiuoOsA'
     );
     console.log('Supabase initialized successfully');
     console.log('Supabase client:', supabase);
@@ -62,10 +62,8 @@ async function initializeAuth() {
       throw new Error('Failed to initialize Supabase');
     }
 
-    // Debug current pathname
-    console.log('Current pathname:', window.location.pathname);
+    console.log('Current origin:', window.location.origin);
 
-    // Check current session
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) {
       console.error('Error checking session:', sessionError.message);
@@ -88,7 +86,6 @@ async function initializeAuth() {
       }
     }
 
-    // Handle auth state changes
     supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event, session);
       if (event === 'SIGNED_IN' && session) {
@@ -117,7 +114,6 @@ async function initializeAuth() {
   }
 }
 
-// Helper functions for page checks
 function isLoginPage() {
   const pathname = window.location.pathname;
   return pathname === '/login.html' || pathname === '/';
@@ -179,11 +175,14 @@ function setupLoginButtons() {
       googleLoginBtn.disabled = true;
       googleLoginBtn.classList.add('loading');
       try {
-        const { error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
-          options: { redirectTo: window.location.origin + '/dashboard.html' }
+          options: {
+            redirectTo: `${window.location.origin}/dashboard.html`
+          }
         });
         if (error) throw error;
+        console.log('Google login initiated:', data);
       } catch (error) {
         console.error('Google login error:', error.message);
         showFeedback('Google login failed: ' + error.message);

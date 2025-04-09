@@ -16,7 +16,6 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Opened cache');
-      // Cache assets individually to avoid addAll failure
       return Promise.all(
         urlsToCache.map((url) => {
           return cache.add(url).catch((error) => {
@@ -40,11 +39,14 @@ self.addEventListener('fetch', (event) => {
         return response;
       }
       return fetch(event.request).then((networkResponse) => {
-        // Optionally cache successful fetches dynamically
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        });
+        // Only cache HTTP/HTTPS requests
+        if (event.request.url.startsWith('http')) {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          });
+        }
+        return networkResponse;
       }).catch((error) => {
         console.error('Fetch failed for:', event.request.url, error);
         if (event.request.url.includes('favicon.ico')) {

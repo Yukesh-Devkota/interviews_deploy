@@ -1,7 +1,3 @@
 [build]
-  base = "."
-  publish = "frontend"
+  publish = "."
   command = "npm install"
-
-[functions]
-  directory = "functions"

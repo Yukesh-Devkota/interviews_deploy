@@ -175,11 +175,11 @@ function setupLoginButtons() {
       googleLoginBtn.disabled = true;
       googleLoginBtn.classList.add('loading');
       try {
+        const redirectUrl = `${window.location.origin}/dashboard.html`;
+        console.log('Redirecting to:', redirectUrl);
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
-          options: {
-            redirectTo: `${window.location.origin}/dashboard.html`
-          }
+          options: { redirectTo: redirectUrl }
         });
         if (error) throw error;
         console.log('Google login initiated:', data);

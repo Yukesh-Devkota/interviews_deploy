@@ -1,3 +1,5 @@
 [build]
-  publish = "."
   command = "npm install"
+  publish = "frontend"  # Corrected to the frontend folder
+[functions]
+  directory = "functions"

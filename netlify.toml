@@ -1,6 +1,6 @@
 [build]
   base = "."
-  publish = "frontend/dashboard.html"
+  publish = "frontend"
   command = "npm install"
 
 [functions]

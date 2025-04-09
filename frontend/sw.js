@@ -8,8 +8,8 @@ const urlsToCache = [
   '/css/index.css',
   '/js/ui.js',
   '/js/auth.js',
-  '/manifest.json',
-  '/assets/favicon.ico'
+  '/manifest.json'
+  // '/favicon.ico' // Uncomment if you add it to frontend/
 ];
 
 self.addEventListener('install', (event) => {
@@ -39,7 +39,6 @@ self.addEventListener('fetch', (event) => {
         return response;
       }
       return fetch(event.request).then((networkResponse) => {
-        // Only cache HTTP/HTTPS requests
         if (event.request.url.startsWith('http')) {
           return caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, networkResponse.clone());

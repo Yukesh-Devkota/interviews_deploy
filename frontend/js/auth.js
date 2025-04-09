@@ -72,8 +72,8 @@ async function initializeAuth() {
       localStorage.setItem('isLoggedIn', 'true');
       updateUserProfile(session.user.email);
       if (isLoginPage()) {
-        console.log('User already logged in, redirecting to dashboard.html');
-        window.location.href = '/dashboard.html';
+        console.log('User already logged in, redirecting to index.html');
+        window.location.href = '/index.html'; // Updated to /index.html
         return;
       }
     } else {
@@ -92,15 +92,15 @@ async function initializeAuth() {
         localStorage.setItem('isLoggedIn', 'true');
         updateUserProfile(session.user.email);
         if (isLoginPage()) {
-          console.log('User signed in, redirecting to dashboard.html');
-          window.location.href = '/dashboard.html';
+          console.log('User signed in, redirecting to index.html');
+          window.location.href = '/index.html'; // Updated to /index.html
         }
       } else if (event === 'SIGNED_OUT') {
         localStorage.removeItem('isLoggedIn');
         updateUserProfile(null);
         if (!isPublicPage()) {
-          console.log('User signed out, redirecting to index.html');
-          window.location.href = '/index.html';
+          console.log('User signed out, redirecting to home.html');
+          window.location.href = '/home.html'; // Updated to /home.html
         }
       }
     });
@@ -121,7 +121,7 @@ function isLoginPage() {
 
 function isPublicPage() {
   const pathname = window.location.pathname;
-  return pathname === '/index.html' || pathname === '/login.html' || pathname === '/';
+  return pathname === '/home.html' || pathname === '/login.html' || pathname === '/'; // Updated to /home.html
 }
 
 function updateUserProfile(email) {
@@ -175,7 +175,7 @@ function setupLoginButtons() {
       googleLoginBtn.disabled = true;
       googleLoginBtn.classList.add('loading');
       try {
-        const redirectUrl = `${window.location.origin}/dashboard.html`;
+        const redirectUrl = `${window.location.origin}/index.html`; // Updated to /index.html
         console.log('Redirecting to:', redirectUrl);
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',

@@ -6,7 +6,7 @@
   <title>Dashboard - Instant Interview Assistant</title>
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/styles.css">
-  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/dashboard.css"> <!-- Kept as dashboard.css -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="manifest" href="/manifest.json">
@@ -24,7 +24,7 @@
         <button id="sidebarToggle" class="sidebar-toggle">☰</button>
       </div>
       <ul class="sidebar-nav">
-        <li class="nav-item active" data-href="/dashboard.html">Dashboard</li>
+        <li class="nav-item active" data-href="/index.html">Dashboard</li> <!-- Updated to /index.html -->
         <li class="nav-item" data-href="/live-interview.html">Live Interview</li>
         <li class="nav-item" data-href="/resume-upload.html">Resume Upload</li>
         <li class="nav-item" data-href="/progress.html">Progress</li>
@@ -92,7 +92,7 @@
   <script src="/js/utils.js"></script>
   <script src="/js/script.js"></script>
   <script>
-    console.log('dashboard.html script loaded');
+    console.log('index.html script loaded'); // Updated log message
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
@@ -101,7 +101,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      console.log('DOM fully loaded in dashboard.html');
+      console.log('DOM fully loaded in index.html'); // Updated log message
 
       // Initialize authentication and fetch user data
       try {

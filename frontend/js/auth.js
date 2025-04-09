@@ -5,131 +5,107 @@ let isAuthInitialized = false;
 
 async function waitForSupabaseScript(timeout = 10000) {
   const supabaseScript = document.getElementById('supabaseScript');
-  if (!supabaseScript) {
-    throw new Error('Supabase script not found in the page');
-  }
-
+  if (!supabaseScript) throw new Error('Supabase script not found');
   return new Promise((resolve, reject) => {
-    if (typeof window.supabase !== 'undefined') {
-      console.log('Supabase script already loaded');
-      return resolve();
-    }
-
-    supabaseScript.addEventListener('load', () => {
-      console.log('Supabase script loaded');
-      resolve();
-    });
-
-    supabaseScript.addEventListener('error', () => {
-      console.error('Supabase script failed to load');
-      reject(new Error('Failed to load Supabase script'));
-    });
-
-    setTimeout(() => {
-      reject(new Error('Supabase script load timed out'));
-    }, timeout);
+    if (typeof window.supabase !== 'undefined') return resolve();
+    supabaseScript.addEventListener('load', resolve);
+    supabaseScript.addEventListener('error', () => reject(new Error('Supabase script failed to load')));
+    setTimeout(() => reject(new Error('Supabase script load timed out')), timeout);
   });
 }
 
 async function initializeSupabase() {
-  console.log('Attempting to initialize Supabase...');
+  console.log('Initializing Supabase...');
   try {
     supabase = window.supabase.createClient(
       'https://fadrnmgjulvdoymevqhf.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZHJubWdqdWx2ZG95bWV2cWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5OTA3NzEsImV4cCI6MjA1ODU2Njc3MX0.XvyVNkjvTiVA5i0Abs1WIIhY-5i9fXfoxMrgIiuoOsA'
     );
-    console.log('Supabase initialized successfully');
-    console.log('Supabase client:', supabase);
+    console.log('Supabase initialized');
     return true;
   } catch (error) {
-    console.error('Supabase initialization failed:', error.message);
+    console.error('Supabase init failed:', error.message);
     return false;
   }
 }
 
 async function initializeAuth() {
-  if (isAuthInitialized) {
-    console.log('Auth already initialized, skipping...');
-    return;
-  }
+  if (isAuthInitialized) return;
   console.log('initializeAuth called');
   isAuthInitialized = true;
 
   try {
     await waitForSupabaseScript();
-    const initialized = await initializeSupabase();
-    if (!initialized) {
-      throw new Error('Failed to initialize Supabase');
+    if (!await initializeSupabase()) throw new Error('Supabase init failed');
+
+    // Handle token from URL hash
+    const hash = window.location.hash;
+    if (hash.includes('access_token')) {
+      console.log('Access token in URL:', hash);
+      const params = new URLSearchParams(hash.replace('#', ''));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      if (accessToken && refreshToken) {
+        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+        console.log('Session set from URL');
+        window.location.hash = ''; // Clear hash after setting session
+      }
     }
 
-    console.log('Current origin:', window.location.origin);
-
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError) {
-      console.error('Error checking session:', sessionError.message);
-    } else if (session) {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) console.error('Session error:', error.message);
+    else if (session) {
       console.log('Session:', session);
       localStorage.setItem('isLoggedIn', 'true');
       updateUserProfile(session.user.email);
       if (isLoginPage()) {
-        console.log('User already logged in, redirecting to dashboard.html');
+        console.log('Redirecting to dashboard.html');
         window.location.href = '/dashboard.html';
         return;
       }
     } else {
-      console.log('No active session found');
+      console.log('No session');
       localStorage.removeItem('isLoggedIn');
       if (!isPublicPage()) {
-        console.log('No session, redirecting to login.html');
+        console.log('Redirecting to login.html');
         window.location.href = '/login.html';
         return;
       }
     }
 
     supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session);
+      console.log('Auth state:', event, session);
       if (event === 'SIGNED_IN' && session) {
         localStorage.setItem('isLoggedIn', 'true');
         updateUserProfile(session.user.email);
-        if (isLoginPage()) {
-          console.log('User signed in, redirecting to dashboard.html');
-          window.location.href = '/dashboard.html';
-        }
+        if (isLoginPage()) window.location.href = '/dashboard.html';
       } else if (event === 'SIGNED_OUT') {
         localStorage.removeItem('isLoggedIn');
         updateUserProfile(null);
-        if (!isPublicPage()) {
-          console.log('User signed out, redirecting to index.html');
-          window.location.href = '/index.html';
-        }
+        if (!isPublicPage()) window.location.href = '/index.html';
       }
     });
 
     setupLoginButtons();
 
   } catch (error) {
-    console.error('Authentication initialization failed:', error.message);
-    showFeedback('Authentication service unavailable. Please refresh the page.');
+    console.error('Auth init failed:', error.message);
+    showFeedback('Auth unavailable. Refresh the page.');
     setupLoginButtonsWithError();
   }
 }
 
 function isLoginPage() {
-  const pathname = window.location.pathname;
-  return pathname === '/login.html' || pathname === '/';
+  return window.location.pathname === '/login.html' || window.location.pathname === '/';
 }
 
 function isPublicPage() {
-  const pathname = window.location.pathname;
-  return pathname === '/index.html' || pathname === '/login.html' || pathname === '/';
+  return window.location.pathname === '/index.html' || window.location.pathname === '/login.html' || window.location.pathname === '/';
 }
 
 function updateUserProfile(email) {
   const userProfile = document.getElementById('userProfile');
-  if (userProfile) {
-    userProfile.textContent = email || 'User Profile';
-    console.log('User profile updated:', email || 'Not logged in');
-  }
+  if (userProfile) userProfile.textContent = email || 'User Profile';
 }
 
 function showFeedback(message) {
@@ -142,107 +118,33 @@ function showFeedback(message) {
 }
 
 function setupLoginButtonsWithError() {
-  console.log('Setting up login buttons with error handling');
   const googleLoginBtn = document.getElementById('googleLoginBtn');
-  if (googleLoginBtn) {
-    googleLoginBtn.addEventListener('click', () => {
-      showFeedback('Authentication service not ready. Please try again later.');
-    });
-  }
-
-  const emailLoginBtn = document.getElementById('emailLoginBtn');
-  const emailForm = document.getElementById('emailForm');
-  if (emailLoginBtn && emailForm) {
-    emailLoginBtn.addEventListener('click', () => {
-      emailForm.style.display = emailForm.style.display === 'none' ? 'flex' : 'none';
-    });
-  }
-
-  const submitEmailLogin = document.getElementById('submitEmailLogin');
-  if (submitEmailLogin) {
-    submitEmailLogin.addEventListener('click', () => {
-      showFeedback('Authentication service not ready. Please try again later.');
-    });
-  }
+  if (googleLoginBtn) googleLoginBtn.addEventListener('click', () => showFeedback('Auth not ready. Try later.'));
 }
 
 function setupLoginButtons() {
-  console.log('Setting up login buttons with Supabase functionality');
-
   const googleLoginBtn = document.getElementById('googleLoginBtn');
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener('click', async () => {
       googleLoginBtn.disabled = true;
-      googleLoginBtn.classList.add('loading');
       try {
         const redirectUrl = `${window.location.origin}/dashboard.html`;
         console.log('Redirecting to:', redirectUrl);
-        const { data, error } = await supabase.auth.signInWithOAuth({
+        const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: { redirectTo: redirectUrl }
         });
         if (error) throw error;
-        console.log('Google login initiated:', data);
       } catch (error) {
         console.error('Google login error:', error.message);
         showFeedback('Google login failed: ' + error.message);
       } finally {
         googleLoginBtn.disabled = false;
-        googleLoginBtn.classList.remove('loading');
-      }
-    });
-  }
-
-  const emailLoginBtn = document.getElementById('emailLoginBtn');
-  const emailForm = document.getElementById('emailForm');
-  if (emailLoginBtn && emailForm) {
-    emailLoginBtn.addEventListener('click', () => {
-      emailForm.style.display = emailForm.style.display === 'none' ? 'flex' : 'none';
-    });
-  }
-
-  const submitEmailLogin = document.getElementById('submitEmailLogin');
-  if (submitEmailLogin) {
-    submitEmailLogin.addEventListener('click', async () => {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!email || !password) {
-        showFeedback('Please enter both email and password.');
-        return;
-      }
-
-      submitEmailLogin.disabled = true;
-      submitEmailLogin.classList.add('loading');
-      try {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      } catch (error) {
-        console.error('Email login error:', error.message);
-        showFeedback('Login failed: ' + error.message);
-      } finally {
-        submitEmailLogin.disabled = false;
-        submitEmailLogin.classList.remove('loading');
-      }
-    });
-  }
-
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-      } catch (error) {
-        console.error('Logout error:', error.message);
-        showFeedback('Logout failed: ' + error.message);
       }
     });
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (!isAuthInitialized) {
-    initializeAuth();
-  }
+  if (!isAuthInitialized) initializeAuth();
 });

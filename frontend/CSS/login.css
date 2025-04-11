@@ -1,24 +1,26 @@
 /* Page-Specific Styles for login.html */
 
-/* Root Variables (Matching your theme) */
+/* Root Variables (Based on your shared CSS) */
 :root {
-  --bg-color: linear-gradient(135deg, #e0f7fa, #c8e6c9); /* Light gradient from mockup */
+  --bg-color: #f0f4f8;
+  --container-bg: rgba(255, 255, 255, 0.9);
   --text-color: #1e2a3c;
-  --accent-color: #ff6f61; /* Coral */
-  --secondary-color: #007bff; /* Blue */
-  --golden-accent: #d4a017; /* Golden */
-  --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --accent-color: #ff6f61;
+  --secondary-color: #007bff;
+  --golden-accent: #d4a017;
+  --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   --border-color: rgba(233, 236, 239, 0.6);
-  --transition: all 0.6s ease-in-out;
+  --transition: all 0.3s ease;
 }
 
 body.dark {
-  --bg-color: linear-gradient(135deg, #1e2a3c, #2a4066);
+  --bg-color: #1e2a3c;
+  --container-bg: rgba(42, 59, 85, 0.9);
   --text-color: #e0e6ed;
   --accent-color: #ff8a80;
   --secondary-color: #00c4b4;
   --golden-accent: #e0b11c;
-  --shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   --border-color: rgba(59, 74, 107, 0.6);
 }
 
@@ -26,11 +28,11 @@ body.dark {
 body {
   margin: 0;
   padding: 0;
+  background: var(--bg-color);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
-  background: var(--bg-color);
   overflow-x: hidden;
 }
 
@@ -42,19 +44,20 @@ body {
   box-shadow: var(--shadow);
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  animation: fadeIn 1s ease-out;
 }
 
 .login-header h1 {
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 700;
   margin: 0;
 }
 
 .header-message {
-  font-size: 18px;
-  margin: 5px 0 0;
-  font-weight: 500;
+  font-size: 22px;
+  margin: 10px 0 0;
   color: #f0f0f0;
+  animation: fadeIn 1.2s ease-out;
 }
 
 .main-content {
@@ -76,9 +79,9 @@ body {
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 20px;
+  border-radius: 15px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   transition: background 0.3s ease, transform 0.2s ease;
 }
@@ -109,6 +112,7 @@ body {
   align-items: center;
   opacity: 1;
   transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .sign-in-panel {
@@ -151,7 +155,7 @@ input {
   margin: 10px 0;
   border: 2px solid var(--border-color);
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-color);
   background: transparent;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -169,8 +173,8 @@ input:focus {
   background: var(--golden-accent);
   color: white;
   border: none;
-  border-radius: 25px;
-  font-size: 16px;
+  border-radius: 15px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   margin-top: 20px;
@@ -224,6 +228,12 @@ input:focus {
   opacity: 1;
 }
 
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* Responsive Design */
 @media (max-width: 480px) {
   .login-header {
@@ -243,7 +253,7 @@ input:focus {
   }
   .toggle-btn {
     padding: 8px 15px;
-    font-size: 12px;
+    font-size: 14px;
   }
   h2 {
     font-size: 24px;
@@ -251,12 +261,11 @@ input:focus {
   input {
     width: 90%;
     padding: 10px;
-    font-size: 14px;
   }
   .submit-btn {
     width: 90%;
     padding: 10px;
-    font-size: 14px;
+    font-size: 16px;
   }
   .main-footer {
     flex-direction: column;

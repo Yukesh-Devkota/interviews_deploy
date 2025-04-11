@@ -43,11 +43,7 @@
   </main>
   <footer class="main-footer">
     <p>© 2025 Instant Interview Assistant</p>
-    <div class="social-icons">
-      <a href="#"><i class="fas fa-envelope"></i></a>
-      <a href="#"><i class="fas fa-twitter"></i></a>
-    </div>
-    <a href="#">Privacy Policy</a>
+    <a href="#" class="privacy-link">Privacy Policy</a>
   </footer>
   <div id="authFeedback" class="error-message"></div>
 
@@ -58,6 +54,7 @@
 
     toggleSignUpButton.addEventListener('click', () => {
       formWrapper.classList.toggle('show-signup');
+      toggleSignUpButton.textContent = formWrapper.classList.contains('show-signup') ? 'Switch to Sign In' : 'Switch to Sign Up';
     });
   </script>
 </body>

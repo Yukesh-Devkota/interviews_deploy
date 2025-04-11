@@ -38,7 +38,6 @@ async function initializeAuth() {
     await waitForSupabaseScript();
     if (!await initializeSupabase()) throw new Error('Supabase init failed');
 
-    // Handle token from URL hash
     const hash = window.location.hash;
     if (hash.includes('access_token')) {
       console.log('Access token in URL:', hash);
@@ -48,7 +47,7 @@ async function initializeAuth() {
       if (accessToken && refreshToken) {
         await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
         console.log('Session set from URL');
-        window.location.hash = ''; // Clear hash after setting session
+        window.location.hash = '';
       }
     }
 
@@ -87,6 +86,7 @@ async function initializeAuth() {
     });
 
     setupLoginButtons();
+    setupSignupButton(); // New signup handler
 
   } catch (error) {
     console.error('Auth init failed:', error.message);
@@ -120,6 +120,14 @@ function showFeedback(message) {
 function setupLoginButtonsWithError() {
   const googleLoginBtn = document.getElementById('googleLoginBtn');
   if (googleLoginBtn) googleLoginBtn.addEventListener('click', () => showFeedback('Auth not ready. Try later.'));
+
+  const emailLoginBtn = document.getElementById('emailLoginBtn');
+  const emailForm = document.getElementById('emailForm');
+  if (emailLoginBtn && emailForm) {
+    emailLoginBtn.addEventListener('click', () => {
+      emailForm.style.display = emailForm.style.display === 'none' ? 'flex' : 'none';
+    });
+  }
 }
 
 function setupLoginButtons() {
@@ -140,6 +148,71 @@ function setupLoginButtons() {
         showFeedback('Google login failed: ' + error.message);
       } finally {
         googleLoginBtn.disabled = false;
+      }
+    });
+  }
+
+  const emailLoginBtn = document.getElementById('emailLoginBtn');
+  const emailForm = document.getElementById('emailForm');
+  if (emailLoginBtn && emailForm) {
+    emailLoginBtn.addEventListener('click', () => {
+      emailForm.style.display = emailForm.style.display === 'none' ? 'flex' : 'none';
+    });
+  }
+
+  const submitEmailLogin = document.getElementById('submitEmailLogin');
+  if (submitEmailLogin) {
+    submitEmailLogin.addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!email || !password) {
+        showFeedback('Please enter both email and password.');
+        return;
+      }
+      submitEmailLogin.disabled = true;
+      try {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } catch (error) {
+        console.error('Email login error:', error.message);
+        showFeedback('Login failed: ' + error.message);
+      } finally {
+        submitEmailLogin.disabled = false;
+      }
+    });
+  }
+}
+
+function setupSignupButton() {
+  const submitSignup = document.getElementById('submitSignup');
+  if (submitSignup) {
+    submitSignup.addEventListener('click', async () => {
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value.trim();
+      if (!email || !password) {
+        showFeedback('Please enter both email and password.');
+        return;
+      }
+      submitSignup.disabled = true;
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/dashboard.html` }
+        });
+        if (error) throw error;
+        console.log('Signup successful:', data);
+        showFeedback('Signup successful! Check your email to confirm, then log in.');
+        // Optionally auto-login if Supabase logs in immediately (depends on settings)
+        if (data.session) {
+          await supabase.auth.setSession(data.session);
+          window.location.href = '/dashboard.html';
+        }
+      } catch (error) {
+        console.error('Signup error:', error.message);
+        showFeedback('Signup failed: ' + error.message);
+      } finally {
+        submitSignup.disabled = false;
       }
     });
   }

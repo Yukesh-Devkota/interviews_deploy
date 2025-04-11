@@ -14,43 +14,30 @@
 </head>
 <body>
   <header class="login-header">
-    <div class="logo-placeholder">I<I>A</I></div>
     <h1>Instant Interview Assistant</h1>
-    <p class="header-message">Unlock your interview potential with ease – Sign In or Join Now!</p>
+    <p class="header-message">Empower your interview skills – Sign In or Register now!</p>
   </header>
-  <div class="container" id="container">
-    <div class="form-container sign-up-container">
-      <form id="signupForm" action="#">
-        <h1>Create Account</h1>
-        <span>or use your email for registration</span>
-        <input type="text" placeholder="Name" id="signupName" required>
-        <input type="email" placeholder="Email" id="signupEmail" required>
-        <input type="password" placeholder="Password" id="signupPassword" required>
-        <button type="submit" class="submit-btn">Sign Up</button>
-        <button class="toggle-btn" id="switchToSignIn">Back to Sign In</button>
-      </form>
-    </div>
-    <div class="form-container sign-in-container">
-      <form id="loginForm" action="#">
-        <h1>Sign In</h1>
-        <span>or use your account</span>
-        <input type="email" placeholder="Email" id="loginEmail" required>
-        <input type="password" placeholder="Password" id="loginPassword" required>
-        <button type="submit" class="submit-btn">Sign In</button>
-      </form>
-    </div>
-    <div class="overlay-container">
-      <div class="overlay">
-        <div class="overlay-panel overlay-left">
-          <h1>Welcome Back!</h1>
-          <p>To keep connected with us, please login with your details</p>
-          <button class="ghost" id="signIn">Sign In</button>
-        </div>
-        <div class="overlay-panel overlay-right">
-          <h1>Create Account</h1>
-          <p>Start your journey with us by registering today</p>
-          <button class="ghost" id="signUp">Sign Up</button>
-        </div>
+  <div class="main-container">
+    <div class="form-wrapper">
+      <button class="toggle-btn" id="toggleSignUp">Sign Up</button>
+      <div class="form-panel sign-up-panel">
+        <form id="signupForm">
+          <h2>Create Account</h2>
+          <span>Use your email to register</span>
+          <input type="text" placeholder="Full Name" id="signupName" required>
+          <input type="email" placeholder="Email" id="signupEmail" required>
+          <input type="password" placeholder="Password" id="signupPassword" required>
+          <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+      </div>
+      <div class="form-panel sign-in-panel">
+        <form id="loginForm">
+          <h2>Sign In</h2>
+          <span>Use your account credentials</span>
+          <input type="email" placeholder="Email" id="loginEmail" required>
+          <input type="password" placeholder="Password" id="loginPassword" required>
+          <button type="submit" class="submit-btn">Sign In</button>
+        </form>
       </div>
     </div>
   </div>
@@ -58,26 +45,11 @@
 
   <script src="/js/auth.js"></script>
   <script>
-    const signUpButton = document.getElementById('signUp');
-    const signInButton = document.getElementById('signIn');
-    const switchToSignUpButton = document.getElementById('switchToSignUp');
-    const switchToSignInButton = document.getElementById('switchToSignIn');
-    const container = document.getElementById('container');
+    const toggleSignUpButton = document.getElementById('toggleSignUp');
+    const formWrapper = document.querySelector('.form-wrapper');
 
-    signUpButton.addEventListener('click', () => {
-      container.classList.add("right-panel-active");
-    });
-
-    signInButton.addEventListener('click', () => {
-      container.classList.remove("right-panel-active");
-    });
-
-    switchToSignUpButton.addEventListener('click', () => {
-      container.classList.add("right-panel-active");
-    });
-
-    switchToSignInButton.addEventListener('click', () => {
-      container.classList.remove("right-panel-active");
+    toggleSignUpButton.addEventListener('click', () => {
+      formWrapper.classList.toggle('show-signup');
     });
   </script>
 </body>

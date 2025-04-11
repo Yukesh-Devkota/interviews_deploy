@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interviews Assist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> <!-- Matching the image font style -->
+  <title>InterviewsAssist - Ace Interviews with AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/index.css">
   <link rel="manifest" href="/manifest.json">
@@ -12,86 +13,157 @@
 </head>
 <body>
   <div class="main-content">
-    <div class="hero-bg"></div>
-    <div class="container">
-      <!-- Header -->
-      <div class="header">
-        <div class="logo">IA</div>
-        <button class="signup-btn" id="signupBtn">Get Started</button>
+    <nav class="navbar">
+      <div class="logo">𝓘𝓐</div>
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <a href="#" class="login-btn" id="loginBtn">Login</a>
+    </nav>
+
+    <!-- Home Section (Top of Page) -->
+    <section class="hero-section" id="home">
+      <div class="hero-text">
+        <h1>Ace Interviews with AI Support & Expert Guidance</h1>
+        <p>Master your interview skills with personalized mock interviews, AI-driven feedback, and expert tips tailored to help you succeed.</p>
+        <button class="get-started-btn" id="getStartedBtn">Get Started</button>
       </div>
+      <div class="hero-image">
+        <img src="https://scontent.fblr20-2.fna.fbcdn.net/v/t39.30808-6/490051569_1232850892180644_2547316227037218796_n.jpg?stp=dst-jpg_p552x414_tt6&_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=RWzsmYzyR_kQ7kNvwGmFQUQ&_nc_oc=AdkYah7rwQNCYkHh38djA4c6N8k7gbxHBME3292dYEjwjbkWTPsTorVkk3yqAHUfV8HQQk1nxUtIk1jrFw3F4iFZ&_nc_zt=23&_nc_ht=scontent.fblr20-2.fna&_nc_gid=QNKH83KXgWsXQgabH3_Axw&oh=00_AfE3AAL5HdtodeKlvhfHhRtr9adTMba-iBFWnAL549yf9A&oe=67FF397A" alt="Young man on laptop with AI chat">
+      </div>
+    </section>
 
-      <!-- Hero Section (Two-Column) -->
-      <section class="hero-section">
-        <div class="hero-left">
-          <h1>Welcome to <span>Interviews Assist</span></h1>
-          <p class="hero-motto">Building Confidence to Land Your Dream Job</p>
-          <p class="hero-subtitle">Your guide to overcoming interview fear and anxiety, helping freshers succeed by conquering nervousness and memory lapses.</p>
-          <button class="action-btn" id="exploreBtn">Begin Now</button>
-        </div>
-        <div class="hero-right">
-          <h2>About Us</h2>
-          <p>Interviews Assist is your partner in transforming interview fear into confidence. With AI-powered tools, we guide freshers to master interviews, ensuring they never forget answers due to anxiety.</p>
-          <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=1350" alt="Interview Coding Setup" class="about-image">
-        </div>
-      </section>
+    <section class="features-section">
+      <div class="feature-card">
+        <i class="fas fa-shield-check"></i>
+        <h3>Confidence</h3>
+        <p>Enhance your confidence and perform at your best.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-heart"></i>
+        <h3>Anxiety Reduction</h3>
+        <p>Manage interview anxiety with effective techniques.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-briefcase"></i>
+        <h3>Dream Job Success</h3>
+        <p>Increase your chances of landing your ideal job.</p>
+      </div>
+    </section>
 
-      <!-- Article Section -->
-      <section class="articles-section">
-        <div class="article-container">
-          <div class="article-card">
-            <h3>Overcome Interview Fear</h3>
-            <p>Learn techniques to stay calm and confident during high-pressure interviews.</p>
-          </div>
-          <div class="article-card">
-            <h3>Master Key Skills</h3>
-            <p>Practice with AI to perfect your answers and avoid memory blanks.</p>
-          </div>
-          <div class="article-card">
-            <h3>Boost Confidence</h3>
-            <p>Build self-assurance with personalized feedback and mock interviews.</p>
-          </div>
-          <div class="article-card">
-            <h3>Prepare for Success</h3>
-            <p>Get ready for your dream job with scenario-based training.</p>
-          </div>
-          <div class="article-card">
-            <h3>Track Your Progress</h3>
-            <p>Monitor improvements with detailed analytics and insights.</p>
-          </div>
-          <div class="article-card">
-            <h3>Conquer Anxiety</h3>
-            <p>Overcome nervousness with expert tips and real-time support.</p>
-          </div>
-          <div class="article-card">
-            <h3>Ace Every Question</h3>
-            <p>Practice common questions to ensure you’re ready for any challenge.</p>
-          </div>
-          <div class="article-card">
-            <h3>Land Your Dream Job</h3>
-            <p>Turn your interview skills into job offers with our guidance.</p>
-          </div>
+    <!-- Articles Section (Tips) -->
+    <section class="tips-section">
+      <h2>Expert Interview Tips</h2>
+      <div class="tips-content">
+        <div class="tip-item">
+          <h3>Overcome Anxiety</h3>
+          <p>Learn techniques to manage nerves and stay focused during interviews.</p>
         </div>
-      </section>
-    </div>
+        <div class="tip-item">
+          <h3>Boost Confidence</h3>
+          <p>Practice with mock interviews to build self-assurance.</p>
+        </div>
+        <div class="tip-item">
+          <h3>Master Key Skills</h3>
+          <p>Prepare for common questions with tailored advice.</p>
+        </div>
+        <div class="tip-item">
+          <h3>Technical Prep</h3>
+          <p>Sharpen coding skills with structured exercises.</p>
+        </div>
+        <div class="tip-item">
+          <h3>Perfect Your Pitch</h3>
+          <p>Craft a compelling introduction with professional templates.</p>
+        </div>
+        <div class="tip-item">
+          <h3>Land Your Job</h3>
+          <p>Follow a step-by-step plan to turn skills into offers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Articles Section (Stories) -->
+    <section class="stories-section">
+      <h2>Success Stories</h2>
+      <div class="stories-content">
+        <div class="story-item">
+          <p>"InterviewsAssist helped me land my first job with confidence!"</p>
+          <span>- Aisha R., Fresher</span>
+        </div>
+        <div class="story-item">
+          <p>"The mock interviews were key to acing my tech interview."</p>
+          <span>- Vikram S., Graduate</span>
+        </div>
+        <div class="story-item">
+          <p>"I overcame my fears and secured my dream role thanks to this platform."</p>
+          <span>- Neha P., Job Seeker</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+      <h2>About Us</h2>
+      <p>Interviews Assistant (IA) is proudly owned by FlashFeed, a platform dedicated to empowering job seekers with innovative tools.</p>
+      <p>IA stands for Interviews Assistant, designed to provide AI-driven mock interviews and expert guidance to help you ace your interviews.</p>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+      <h2>Contact Us</h2>
+      <p><a href="mailto:FlashFeed.page@gmail.com">FlashFeed.page@gmail.com</a></p>
+      <p><a href="mailto:YukeshDevkotawork@gmail.com">YukeshDevkotawork@gmail.com</a></p>
+    </section>
   </div>
 
-  <script src="/js/ui.js"></script>
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+      <h2>Start Your Journey</h2>
+      <p>Join thousands of professionals who have transformed their careers with InterviewsAssist.</p>
+      <button class="get-started-btn" id="ctaGetStartedBtn">Get Started Today</button>
+    </section>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const exploreBtn = document.getElementById('exploreBtn');
-      const signupBtn = document.getElementById('signupBtn');
+      // Login and Get Started Button Functionality
+      const loginBtn = document.getElementById('loginBtn');
+      const getStartedBtn = document.getElementById('getStartedBtn');
+      const ctaGetStartedBtn = document.getElementById('ctaGetStartedBtn');
 
-      if (exploreBtn) {
-        exploreBtn.addEventListener('click', () => {
-          window.location.href = '/login.html';
-        });
-      }
+      if (loginBtn) loginBtn.addEventListener('click', () => window.location.href = '/login.html');
+      if (getStartedBtn) getStartedBtn.addEventListener('click', () => window.location.href = '/login.html');
+      if (ctaGetStartedBtn) ctaGetStartedBtn.addEventListener('click', () => window.location.href = '/login.html');
 
-      if (signupBtn) {
-        signupBtn.addEventListener('click', () => {
-          window.location.href = '/login.html';
+      // Navigation Scroll Behavior
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          const targetSection = document.querySelector(targetId);
+          if (targetId === '#home') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else if (targetSection) {
+            targetSection.scrollIntoView({ behavior: 'smooth' });
+          }
         });
-      }
+      });
+
+      // Header Scroll Behavior
+      let lastScroll = 0;
+      const navbar = document.querySelector('.navbar');
+
+      window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        if (currentScroll > lastScroll) {
+          navbar.style.transform = 'translateY(-100%)';
+        } else {
+          navbar.style.transform = 'translateY(0)';
+        }
+        lastScroll = currentScroll;
+      });
     });
   </script>
 </body>

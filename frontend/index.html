@@ -14,17 +14,24 @@
   <div class="main-content">
     <div class="hero-bg"></div>
     <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo">IA</div>
+        <button class="signup-btn" id="signupBtn">Get Started</button>
+      </div>
+
       <!-- Hero Section (Two-Column) -->
       <section class="hero-section">
         <div class="hero-left">
-          <h1>Welcome to <span>Inter</span><span>Assist</span></h1>
-          <p>Your guide to overcoming interview anxiety with confidence.</p>
+          <h1>Welcome to <span>Interviews Assist</span></h1>
+          <p class="hero-motto">Building Confidence to Land Your Dream Job</p>
+          <p class="hero-subtitle">Your guide to overcoming interview fear and anxiety, helping freshers succeed by conquering nervousness and memory lapses.</p>
           <button class="action-btn" id="exploreBtn">Begin Now</button>
         </div>
         <div class="hero-right">
           <h2>About Us</h2>
-          <p>Discover a transformative journey with Interviews Assist, where AI meets innovation. Our unique approach blends personalized coaching with real-world simulations, helping you conquer interviews with unparalleled ease.</p>
-          <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1350" alt="Inspirational Landscape" class="about-image">
+          <p>Interviews Assist is your partner in transforming interview fear into confidence. With AI-powered tools, we guide freshers to master interviews, ensuring they never forget answers due to anxiety.</p>
+          <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=1350" alt="Interview Coding Setup" class="about-image">
         </div>
       </section>
 
@@ -32,16 +39,36 @@
       <section class="articles-section">
         <div class="article-container">
           <div class="article-card">
-            <h3>Master Your Skills</h3>
-            <p>Learn proven techniques to shine in any interview with our AI-driven practice sessions.</p>
+            <h3>Overcome Interview Fear</h3>
+            <p>Learn techniques to stay calm and confident during high-pressure interviews.</p>
           </div>
           <div class="article-card">
-            <h3>Build Confidence</h3>
-            <p>Overcome nervousness with tailored feedback and scenario-based training.</p>
+            <h3>Master Key Skills</h3>
+            <p>Practice with AI to perfect your answers and avoid memory blanks.</p>
           </div>
           <div class="article-card">
-            <h3>Track Your Growth</h3>
-            <p>Monitor your progress with detailed analytics to ensure continuous improvement.</p>
+            <h3>Boost Confidence</h3>
+            <p>Build self-assurance with personalized feedback and mock interviews.</p>
+          </div>
+          <div class="article-card">
+            <h3>Prepare for Success</h3>
+            <p>Get ready for your dream job with scenario-based training.</p>
+          </div>
+          <div class="article-card">
+            <h3>Track Your Progress</h3>
+            <p>Monitor improvements with detailed analytics and insights.</p>
+          </div>
+          <div class="article-card">
+            <h3>Conquer Anxiety</h3>
+            <p>Overcome nervousness with expert tips and real-time support.</p>
+          </div>
+          <div class="article-card">
+            <h3>Ace Every Question</h3>
+            <p>Practice common questions to ensure you’re ready for any challenge.</p>
+          </div>
+          <div class="article-card">
+            <h3>Land Your Dream Job</h3>
+            <p>Turn your interview skills into job offers with our guidance.</p>
           </div>
         </div>
       </section>
@@ -52,9 +79,16 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const exploreBtn = document.getElementById('exploreBtn');
+      const signupBtn = document.getElementById('signupBtn');
 
       if (exploreBtn) {
         exploreBtn.addEventListener('click', () => {
+          window.location.href = '/login.html';
+        });
+      }
+
+      if (signupBtn) {
+        signupBtn.addEventListener('click', () => {
           window.location.href = '/login.html';
         });
       }

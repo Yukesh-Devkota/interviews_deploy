@@ -37,14 +37,30 @@ body {
   overflow-x: hidden;
 }
 
-h1 {
+.login-header {
+  text-align: center;
+  padding: 20px 0;
+  background: var(--container-bg);
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+
+.login-header h1 {
+  font-size: 32px;
   font-weight: 700;
+  color: var(--secondary-color);
   margin: 0;
 }
 
-h2 {
-  text-align: center;
+.header-message {
+  font-size: 16px;
   color: var(--text-color);
+  margin: 5px 0 0;
+}
+
+h1 {
+  font-weight: 700;
+  margin: 0;
 }
 
 p {
@@ -140,6 +156,7 @@ input:focus {
   width: 768px;
   max-width: 100%;
   min-height: 480px;
+  margin-top: 20px;
 }
 
 .form-container {
@@ -200,10 +217,7 @@ input:focus {
 }
 
 .overlay {
-  background: linear-gradient(90deg, var(--secondary-color), var(--golden-accent));
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: 0 0;
+  background: var(--secondary-color); /* Single color to avoid overlap */
   color: white;
   position: relative;
   left: -100%;
@@ -247,28 +261,6 @@ input:focus {
 
 .container.right-panel-active .overlay-right {
   transform: translateX(20%);
-}
-
-.social-container {
-  margin: 20px 0;
-}
-
-.social-container a {
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 5px;
-  height: 40px;
-  width: 40px;
-  color: var(--text-color);
-  transition: background-color 0.3s ease;
-}
-
-.social-container a:hover {
-  background-color: var(--secondary-color);
-  color: white;
 }
 
 .error-message {

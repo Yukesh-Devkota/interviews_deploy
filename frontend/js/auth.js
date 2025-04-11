@@ -100,9 +100,40 @@ function showFeedback(message) {
 function handleAuthForm() {
   const loginForm = document.getElementById('loginForm');
   const signupForm = document.getElementById('signupForm');
-  const activePanel = document.querySelector('.slider-panel.active');
+  const container = document.getElementById('container');
 
-  if (activePanel.classList.contains('login-panel')) {
+  if (container.classList.contains('right-panel-active')) {
+    if (signupForm) {
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value.trim();
+        if (!name || !email || !password) {
+          showFeedback('Please fill all fields.');
+          return;
+        }
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { name }, emailRedirectTo: `${window.location.origin}/dashboard.html` }
+          });
+          if (error) throw error;
+          console.log('Signup successful:', data);
+          if (data.session) {
+            await supabase.auth.setSession(data.session);
+            window.location.href = '/dashboard.html';
+          } else {
+            showFeedback('Signup successful! Check your email to confirm, then log in.');
+          }
+        } catch (error) {
+          console.error('Signup error:', error.message);
+          showFeedback('Signup failed: ' + error.message);
+        }
+      });
+    }
+  } else {
     if (loginForm) {
       loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -118,36 +149,6 @@ function handleAuthForm() {
         } catch (error) {
           console.error('Login error:', error.message);
           showFeedback('Login failed: ' + error.message);
-        }
-      });
-    }
-  } else if (activePanel.classList.contains('signup-panel')) {
-    if (signupForm) {
-      signupForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('signupEmail').value.trim();
-        const password = document.getElementById('signupPassword').value.trim();
-        if (!email || !password) {
-          showFeedback('Please enter both email and password.');
-          return;
-        }
-        try {
-          const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: `${window.location.origin}/dashboard.html` }
-          });
-          if (error) throw error;
-          console.log('Signup successful:', data);
-          if (data.session) {
-            await supabase.auth.setSession(data.session);
-            window.location.href = '/dashboard.html';
-          } else {
-            showFeedback('Signup successful! Check your email to confirm, then log in.');
-          }
-        } catch (error) {
-          console.error('Signup error:', error.message);
-          showFeedback('Signup failed: ' + error.message);
         }
       });
     }

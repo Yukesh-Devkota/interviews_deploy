@@ -54,7 +54,7 @@ body {
 }
 
 .header-message {
-  font-size: 22px;
+  font-size: 1000px;
   margin: 10px 0 0;
   color: #f0f0f0;
   animation: fadeIn 1.2s ease-out;

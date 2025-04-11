@@ -44,12 +44,12 @@ async function initializeAuth() {
       console.log('Active session:', session);
       localStorage.setItem('isLoggedIn', 'true');
       updateUserProfile(session.user.email);
-      if (isLoginPage()) window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard.html';
       return;
     } else {
       console.log('No session');
       localStorage.removeItem('isLoggedIn');
-      handleAuthForm();
+      handleAuthForms();
     }
 
     supabase.auth.onAuthStateChange((event, session) => {
@@ -57,26 +57,18 @@ async function initializeAuth() {
       if (event === 'SIGNED_IN' && session) {
         localStorage.setItem('isLoggedIn', 'true');
         updateUserProfile(session.user.email);
-        if (isLoginPage()) window.location.href = '/dashboard.html';
+        window.location.href = '/dashboard.html';
       } else if (event === 'SIGNED_OUT') {
         localStorage.removeItem('isLoggedIn');
         updateUserProfile(null);
-        if (!isPublicPage()) window.location.href = '/index.html';
+        if (window.location.pathname !== '/login.html') window.location.href = '/login.html';
       }
     });
 
   } catch (error) {
     console.error('Auth init failed:', error.message);
-    showFeedback('Auth unavailable. Refresh the page.');
+    showFeedback('loginError', 'Auth unavailable. Refresh the page.');
   }
-}
-
-function isLoginPage() {
-  return window.location.pathname === '/login.html' || window.location.pathname === '/';
-}
-
-function isPublicPage() {
-  return window.location.pathname === '/index.html' || window.location.pathname === '/login.html' || window.location.pathname === '/';
 }
 
 function updateUserProfile(email) {
@@ -84,12 +76,12 @@ function updateUserProfile(email) {
   if (userProfile) userProfile.textContent = email || 'User Profile';
   const welcomeUserName = document.getElementById('welcomeUserName');
   const sidebarUserName = document.getElementById('sidebarUserName');
-  if (welcomeUserName) welcomeUserName.textContent = email.split('@')[0] || 'User';
-  if (sidebarUserName) sidebarUserName.textContent = email.split('@')[0] || 'User';
+  if (welcomeUserName) welcomeUserName.textContent = email ? email.split('@')[0] : 'User';
+  if (sidebarUserName) sidebarUserName.textContent = email ? email.split('@')[0] : 'User';
 }
 
-function showFeedback(message) {
-  const feedback = document.getElementById('authFeedback');
+function showFeedback(elementId, message) {
+  const feedback = document.getElementById(elementId);
   if (feedback) {
     feedback.textContent = message;
     feedback.classList.add('show');
@@ -97,61 +89,64 @@ function showFeedback(message) {
   }
 }
 
-function handleAuthForm() {
+function handleAuthForms() {
   const loginForm = document.getElementById('loginForm');
   const signupForm = document.getElementById('signupForm');
-  const formWrapper = document.querySelector('.form-wrapper');
+  const submitLogin = document.getElementById('submitLogin');
+  const submitSignup = document.getElementById('submitSignup');
 
-  if (formWrapper.classList.contains('show-signup')) {
-    if (signupForm) {
-      signupForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('signupName').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
-        const password = document.getElementById('signupPassword').value.trim();
-        if (!name || !email || !password) {
-          showFeedback('Please fill all fields.');
-          return;
+  if (loginForm.classList.contains('active')) {
+    submitLogin.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!email || !password) {
+        showFeedback('loginError', 'Please enter both email and password.');
+        return;
+      }
+      try {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } catch (error) {
+        console.error('Login error:', error.message);
+        showFeedback('loginError', 'Login failed: ' + error.message);
+      }
+    });
+  }
+
+  if (signupForm.classList.contains('active')) {
+    submitSignup.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value.trim();
+      if (!name || !email || !password) {
+        showFeedback('signupError', 'Please fill all fields.');
+        return;
+      }
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { name }, emailRedirectTo: `${window.location.origin}/login.html` }
+        });
+        if (error) throw error;
+        console.log('Signup successful:', data);
+        if (data.session) {
+          await supabase.auth.setSession(data.session);
+          window.location.href = '/dashboard.html';
+        } else {
+          showFeedback('signupError', 'Signup successful! Check your email to confirm.');
+          document.getElementById('signupForm').style.display = 'none';
+          document.getElementById('loginForm').style.display = 'block';
+          document.getElementById('loginForm').classList.add('active');
+          document.getElementById('signupForm').classList.remove('active');
         }
-        try {
-          const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: { name }, emailRedirectTo: `${window.location.origin}/dashboard.html` }
-          });
-          if (error) throw error;
-          console.log('Signup successful:', data);
-          if (data.session) {
-            await supabase.auth.setSession(data.session);
-            window.location.href = '/dashboard.html';
-          } else {
-            showFeedback('Signup successful! Check your email to confirm, then log in.');
-          }
-        } catch (error) {
-          console.error('Signup error:', error.message);
-          showFeedback('Signup failed: ' + error.message);
-        }
-      });
-    }
-  } else {
-    if (loginForm) {
-      loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value.trim();
-        if (!email || !password) {
-          showFeedback('Please enter both email and password.');
-          return;
-        }
-        try {
-          const { error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-        } catch (error) {
-          console.error('Login error:', error.message);
-          showFeedback('Login failed: ' + error.message);
-        }
-      });
-    }
+      } catch (error) {
+        console.error('Signup error:', error.message);
+        showFeedback('signupError', 'Signup failed: ' + error.message);
+      }
+    });
   }
 }
 

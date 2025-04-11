@@ -15,32 +15,40 @@
 <body>
   <header class="login-header">
     <h1>Instant Interview Assistant</h1>
-    <p class="header-message">Empower your interview skills – Sign In or Register now!</p>
+    <p class="header-message">Empower your interview skills – Sign In or Register</p>
   </header>
-  <div class="main-container">
+  <main class="main-content">
+    <div class="form-toggle">
+      <button class="toggle-btn" id="toggleSignUp">Switch to Sign Up</button>
+    </div>
     <div class="form-wrapper">
-      <button class="toggle-btn" id="toggleSignUp">Sign Up</button>
+      <div class="form-panel sign-in-panel">
+        <form id="loginForm">
+          <h2>Sign In</h2>
+          <input type="email" placeholder="Email" id="loginEmail" required>
+          <input type="password" placeholder="Password" id="loginPassword" required>
+          <button type="submit" class="submit-btn">Sign In</button>
+        </form>
+      </div>
       <div class="form-panel sign-up-panel">
         <form id="signupForm">
           <h2>Create Account</h2>
-          <span>Use your email to register</span>
           <input type="text" placeholder="Full Name" id="signupName" required>
           <input type="email" placeholder="Email" id="signupEmail" required>
           <input type="password" placeholder="Password" id="signupPassword" required>
           <button type="submit" class="submit-btn">Sign Up</button>
         </form>
       </div>
-      <div class="form-panel sign-in-panel">
-        <form id="loginForm">
-          <h2>Sign In</h2>
-          <span>Use your account credentials</span>
-          <input type="email" placeholder="Email" id="loginEmail" required>
-          <input type="password" placeholder="Password" id="loginPassword" required>
-          <button type="submit" class="submit-btn">Sign In</button>
-        </form>
-      </div>
     </div>
-  </div>
+  </main>
+  <footer class="main-footer">
+    <p>© 2025 Instant Interview Assistant</p>
+    <div class="social-icons">
+      <a href="#"><i class="fas fa-envelope"></i></a>
+      <a href="#"><i class="fas fa-twitter"></i></a>
+    </div>
+    <a href="#">Privacy Policy</a>
+  </footer>
   <div id="authFeedback" class="error-message"></div>
 
   <script src="/js/auth.js"></script>

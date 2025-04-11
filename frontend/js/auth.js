@@ -100,9 +100,9 @@ function showFeedback(message) {
 function handleAuthForm() {
   const loginForm = document.getElementById('loginForm');
   const signupForm = document.getElementById('signupForm');
-  const container = document.getElementById('container');
+  const formWrapper = document.querySelector('.form-wrapper');
 
-  if (container.classList.contains('right-panel-active')) {
+  if (formWrapper.classList.contains('show-signup')) {
     if (signupForm) {
       signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -154,13 +154,6 @@ function handleAuthForm() {
     }
   }
 }
-
-// Placeholder for future password reset implementation
-/*function resetPassword(email) {
-  supabase.auth.resetPasswordForEmail(email)
-    .then(response => showFeedback('Password reset link sent! Check your email.'))
-    .catch(error => showFeedback('Error resetting password: ' + error.message));
-}*/
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!isAuthInitialized) initializeAuth();

@@ -2,8 +2,8 @@
 
 /* Root Variables (Matching your original theme with golden accent) */
 :root {
-  --bg-color: #f0f4f8;
-  --container-bg: rgba(255, 255, 255, 0.9);
+  --bg-color: linear-gradient(135deg, #e0f7fa, #c8e6c9); /* Attractive gradient background */
+  --container-bg: rgba(255, 255, 255, 0.95);
   --text-color: #1e2a3c;
   --accent-color: #ff6f61; /* Coral */
   --secondary-color: #007bff; /* Blue */
@@ -14,7 +14,7 @@
 }
 
 body.dark {
-  --bg-color: #1e2a3c;
+  --bg-color: linear-gradient(135deg, #1e2a3c, #2a4066);
   --container-bg: rgba(42, 59, 85, 0.9);
   --text-color: #e0e6ed;
   --accent-color: #ff8a80; /* Lighter coral */
@@ -33,29 +33,41 @@ body {
   flex-direction: column;
   font-family: 'Inter', sans-serif;
   height: 100vh;
-  margin: -20px 0 50px;
+  margin: 0;
   overflow-x: hidden;
 }
 
 .login-header {
   text-align: center;
-  padding: 20px 0;
-  background: var(--container-bg);
+  padding: 30px 0;
+  background: linear-gradient(90deg, var(--secondary-color), var(--golden-accent));
   width: 100%;
   box-shadow: var(--shadow);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  color: white;
+}
+
+.logo-placeholder {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.logo-placeholder I {
+  color: var(--golden-accent);
 }
 
 .login-header h1 {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
-  color: var(--secondary-color);
   margin: 0;
 }
 
 .header-message {
-  font-size: 16px;
-  color: var(--text-color);
+  font-size: 18px;
   margin: 5px 0 0;
+  font-weight: 500;
 }
 
 h1 {
@@ -78,11 +90,11 @@ span {
 }
 
 button {
-  border-radius: 20px;
+  border-radius: 25px;
   border: 1px solid var(--golden-accent);
   background-color: var(--golden-accent);
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   padding: 12px 45px;
   letter-spacing: 1px;
@@ -114,7 +126,7 @@ button.ghost:hover {
   background-color: transparent;
   border-color: var(--secondary-color);
   color: var(--secondary-color);
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .toggle-btn:hover {
@@ -128,24 +140,27 @@ form {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 0 50px;
+  padding: 40px;
   height: 100%;
   text-align: center;
+  border-radius: 10px;
 }
 
 input {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--border-color);
   padding: 12px 15px;
-  margin: 8px 0;
+  margin: 10px 0;
   width: 100%;
   border-radius: 10px;
   color: var(--text-color);
-  transition: border-color 0.3s ease;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input:focus {
-  border: 2px solid var(--secondary-color);
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
   outline: none;
 }
 
@@ -155,37 +170,41 @@ input:focus {
   box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
-  width: 768px;
-  max-width: 100%;
-  min-height: 480px;
+  width: 800px;
+  max-width: 90%;
+  min-height: 550px;
   margin-top: 20px;
+  display: flex;
 }
 
 .form-container {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  transition: all 0.6s ease-in-out;
+  position: relative;
   width: 50%;
+  height: 100%;
+  transition: opacity 0.6s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sign-in-container {
-  left: 0;
   z-index: 2;
 }
 
 .container.right-panel-active .sign-in-container {
-  transform: translateX(100%);
+  opacity: 0;
+  z-index: 1;
 }
 
 .sign-up-container {
+  position: absolute;
+  top: 0;
   left: 0;
   opacity: 0;
   z-index: 1;
 }
 
 .container.right-panel-active .sign-up-container {
-  transform: translateX(100%);
   opacity: 1;
   z-index: 5;
   animation: show 0.6s;
@@ -211,6 +230,7 @@ input:focus {
   overflow: hidden;
   transition: transform 0.6s ease-in-out;
   z-index: 100;
+  background: var(--secondary-color);
 }
 
 .container.right-panel-active .overlay-container {
@@ -226,6 +246,9 @@ input:focus {
   width: 200%;
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .container.right-panel-active .overlay {
@@ -281,20 +304,20 @@ input:focus {
 @media (max-width: 768px) {
   .container {
     width: 100%;
-    min-height: 400px;
+    min-height: 500px;
   }
   .form-container {
-    padding: 0 30px;
+    padding: 30px;
   }
   h1 {
-    font-size: 24px;
+    font-size: 28px;
   }
   p {
-    font-size: 12px;
+    font-size: 14px;
   }
   button {
-    padding: 10px 30px;
-    font-size: 12px;
+    padding: 10px 35px;
+    font-size: 14px;
   }
 }
 
@@ -305,6 +328,11 @@ input:focus {
     width: 100%;
     max-width: 100%;
     overflow: visible;
+    margin: 0;
+    border-radius: 0;
+  }
+  .login-header {
+    border-radius: 0;
   }
   .form-container {
     position: static;
@@ -314,22 +342,19 @@ input:focus {
     opacity: 1;
     z-index: 5;
     transform: translateX(0);
-    transition: opacity 0.6s ease-in-out;
+    box-shadow: none;
   }
   .sign-in-container {
     display: block;
   }
   .container.right-panel-active .sign-in-container {
-    opacity: 0;
-    z-index: 1;
+    display: none;
   }
   .sign-up-container {
     display: none;
   }
   .container.right-panel-active .sign-up-container {
     display: block;
-    opacity: 1;
-    z-index: 5;
   }
   .overlay-container {
     display: none;
@@ -337,15 +362,18 @@ input:focus {
   .toggle-btn {
     display: block;
     margin-top: 15px;
+    padding: 12px 40px;
+    font-size: 16px;
   }
   h1 {
-    font-size: 28px;
+    font-size: 32px;
   }
   input {
-    padding: 10px;
+    padding: 12px;
+    font-size: 16px;
   }
   button {
-    padding: 12px 40px;
-    font-size: 14px;
+    padding: 14px 50px;
+    font-size: 16px;
   }
 }

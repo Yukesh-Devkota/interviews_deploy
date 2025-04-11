@@ -1,13 +1,13 @@
 /* Page-Specific Styles for login.html */
 
-/* Root Variables (Matching your original theme with golden accent) */
+/* Root Variables (Matching your theme) */
 :root {
-  --bg-color: linear-gradient(135deg, #e0f7fa, #c8e6c9); /* Attractive theme-aligned gradient */
+  --bg-color: linear-gradient(135deg, #e0f7fa, #c8e6c9); /* Light gradient from mockup */
   --text-color: #1e2a3c;
   --accent-color: #ff6f61; /* Coral */
   --secondary-color: #007bff; /* Blue */
-  --golden-accent: #d4a017; /* Golden accent */
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --golden-accent: #d4a017; /* Golden */
+  --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   --border-color: rgba(233, 236, 239, 0.6);
   --transition: all 0.6s ease-in-out;
 }
@@ -15,10 +15,10 @@
 body.dark {
   --bg-color: linear-gradient(135deg, #1e2a3c, #2a4066);
   --text-color: #e0e6ed;
-  --accent-color: #ff8a80; /* Lighter coral */
-  --secondary-color: #00c4b4; /* Teal */
-  --golden-accent: #e0b11c; /* Lighter golden */
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --accent-color: #ff8a80;
+  --secondary-color: #00c4b4;
+  --golden-accent: #e0b11c;
+  --shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   --border-color: rgba(59, 74, 107, 0.6);
 }
 
@@ -60,6 +60,7 @@ body {
 .main-content {
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 20px;
@@ -83,7 +84,7 @@ body {
 }
 
 .toggle-btn:hover {
-  background: darken(var(--secondary-color), 10%);
+  background: #0056b3;
   transform: translateY(-2px);
 }
 
@@ -106,7 +107,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.6s ease-in-out;
+  opacity: 1;
+  transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
 }
 
 .sign-in-panel {
@@ -140,6 +142,7 @@ h2 {
   font-weight: 700;
   color: var(--text-color);
   margin: 0 0 20px;
+  text-align: center;
 }
 
 input {
@@ -186,37 +189,25 @@ input:focus {
 .main-footer {
   text-align: center;
   padding: 15px 20px;
-  background: linear-gradient(90deg, #1e2a3c, #2a4066);
+  background: #1e2a3c;
   color: white;
   font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .main-footer p {
   margin: 0;
 }
 
-.social-icons {
-  margin: 10px 0;
-}
-
-.social-icons a {
-  color: var(--accent-color);
-  margin: 0 10px;
-  font-size: 18px;
+.privacy-link {
+  color: white;
+  text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.social-icons a:hover {
-  color: darken(var(--accent-color), 10%);
-}
-
-.main-footer a {
-  color: white;
-  text-decoration: none;
-  margin-left: 10px;
-}
-
-.main-footer a:hover {
+.privacy-link:hover {
   color: var(--accent-color);
 }
 
@@ -266,5 +257,9 @@ input:focus {
     width: 90%;
     padding: 10px;
     font-size: 14px;
+  }
+  .main-footer {
+    flex-direction: column;
+    gap: 10px;
   }
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instant Interview Assistant</title>
+  <title>Interviews Assist</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/index.css">
@@ -13,78 +13,58 @@
 <body>
   <div class="main-content">
     <div class="vibrant-bg"></div>
-    <nav class="top-nav">
-      <div class="logo">Instant Interview <span>AI</span></div>
-      <ul class="nav-links">
-        <li><a href="#">Application</a></li>
-        <li><a href="#">AI Mock Interview</a></li>
-        <li><a href="#">Pricing</a></li>
-        <li><a href="#">Resources</a></li>
-        <li><a href="#">Question Bank</a></li>
-        <li><a href="#" class="btn sign-in">Sign In</a></li>
-        <li><a href="#" class="btn sign-up">Sign Up</a></li>
-      </ul>
-    </nav>
+    <header class="motto-header">
+      <h1>Empower Your Confidence, Conquer Your Interview</h1>
+    </header>
 
     <div class="container">
       <!-- Hero Section -->
       <header class="hero-section">
         <div class="hero-content">
-          <h1>Unlock Your Interview Superpowers with AI</h1>
-          <p class="hero-subtitle">Your AI-Powered Interview Copilot</p>
-          <div class="stats">
-            <span>250K+ Offers Received</span> | <span>1.2M+ Interviews Aced</span>
-          </div>
-          <button class="action-btn" id="getStartedBtn">Activate AI Interview Mode Now</button>
-          <p class="hero-note">Interview Copilot™ generating actionable guidance for interviews in real-time</p>
+          <h1>Welcome to Interviews Assist</h1>
+          <p class="hero-subtitle">Your partner in overcoming interview anxiety with AI-driven support.</p>
+          <button class="action-btn" id="exploreBtn">Explore Now</button>
         </div>
       </header>
 
       <!-- Side Panels -->
       <div class="side-panels">
         <div class="transcript-panel">
-          <h3>Live Interview Transcript</h3>
+          <h3>Practice Transcript</h3>
           <div class="transcript-content">
-            <p><strong>Interviewer:</strong> Can you tell me about a challenge you faced?</p>
-            <p><strong>You:</strong> Yes, I managed a tight deadline by prioritizing tasks and collaborating with my team.</p>
-            <p><strong>Interviewer:</strong> How did you handle the pressure?</p>
-            <p><strong>You:</strong> I stayed calm, broke it into steps, and maintained clear communication.</p>
+            <p><strong>Interviewer:</strong> Tell me about a challenge you faced.</p>
+            <p><strong>You:</strong> I managed a project deadline by organizing tasks effectively.</p>
           </div>
         </div>
         <div class="code-panel">
-          <h3>Sample Code</h3>
+          <h3>Sample Tips</h3>
           <pre>
             <code>
-function handleChallenge(challenge) {
-  const response = `I handled a ${challenge} by staying organized and teamwork.`;
-  console.log(response);
-  return response;
-}
-handleChallenge("tight deadline");
+- Stay calm under pressure
+- Prepare key examples
+- Practice clear communication
             </code>
           </pre>
-          <button class="action-btn code-btn">Run Code</button>
         </div>
       </div>
 
       <!-- Article Section -->
       <section class="article-section">
-        <h2>Overcome Interview Anxiety with Confidence</h2>
+        <h2>About Interviews Assist</h2>
         <div class="article-content">
-          <p>Instant Interview Assistant empowers you to conquer interview fear using AI technology. Perfect for freshers and professionals alike, our tools provide:</p>
+          <p>Interviews Assist is designed to help freshers and professionals build confidence for interviews. Using AI technology, we provide personalized guidance to overcome anxiety and improve your skills.</p>
           <ul>
-            <li><strong>Real-Time Feedback:</strong> Instant tips during practice.</li>
-            <li><strong>Custom Scenarios:</strong> Tailored to your experience.</li>
-            <li><strong>Progress Tracking:</strong> Monitor your growth over time.</li>
+            <li>Real-time feedback during practice.</li>
+            <li>Customized scenarios for all levels.</li>
+            <li>Tools to track your progress.</li>
           </ul>
-          <p>Join thousands who’ve succeeded—start now!</p>
         </div>
       </section>
 
       <!-- Call-To-Action Section -->
       <section class="cta-section">
-        <h2>Ready to Ace Your Interview?</h2>
-        <button class="action-btn" id="startInterviewBtn">Start Live Interview</button>
+        <h2>Ready to Begin?</h2>
+        <button class="action-btn" id="startBtn">Get Started</button>
       </section>
     </div>
   </div>
@@ -92,26 +72,18 @@ handleChallenge("tight deadline");
   <script src="/js/ui.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const getStartedBtn = document.getElementById('getStartedBtn');
-      const startInterviewBtn = document.getElementById('startInterviewBtn');
+      const exploreBtn = document.getElementById('exploreBtn');
+      const startBtn = document.getElementById('startBtn');
 
-      if (getStartedBtn) {
-        getStartedBtn.addEventListener('click', () => {
+      if (exploreBtn) {
+        exploreBtn.addEventListener('click', () => {
           window.location.href = '/login.html';
         });
       }
 
-      if (startInterviewBtn) {
-        startInterviewBtn.addEventListener('click', () => {
+      if (startBtn) {
+        startBtn.addEventListener('click', () => {
           window.location.href = '/login.html';
-        });
-      }
-
-      const codeBtn = document.querySelector('.code-btn');
-      if (codeBtn) {
-        codeBtn.addEventListener('click', () => {
-          alert('Code executed: Check console for output!');
-          console.log('Interview response generated!');
         });
       }
     });

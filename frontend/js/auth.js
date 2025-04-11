@@ -38,23 +38,30 @@ async function initializeAuth() {
     await waitForSupabaseScript();
     if (!await initializeSupabase()) throw new Error('Supabase init failed');
 
+    // Handle Google OAuth token from URL hash
     const hash = window.location.hash;
-    if (hash.includes('access_token')) {
+    if (hash && hash.includes('access_token')) {
       console.log('Access token in URL:', hash);
       const params = new URLSearchParams(hash.replace('#', ''));
       const accessToken = params.get('access_token');
       const refreshToken = params.get('refresh_token');
       if (accessToken && refreshToken) {
-        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-        console.log('Session set from URL');
-        window.location.hash = '';
+        const { error } = await supabase.auth.setSession({ 
+          access_token: accessToken, 
+          refresh_token: refreshToken 
+        });
+        if (error) throw error;
+        console.log('Session set from Google OAuth');
+        // Redirect to clean URL to avoid hash issues
+        window.location = '/dashboard.html';
+        return;
       }
     }
 
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) console.error('Session error:', error.message);
     else if (session) {
-      console.log('Session:', session);
+      console.log('Active session:', session);
       localStorage.setItem('isLoggedIn', 'true');
       updateUserProfile(session.user.email);
       if (isLoginPage()) {
@@ -86,7 +93,7 @@ async function initializeAuth() {
     });
 
     setupLoginButtons();
-    setupSignupButton(); // New signup handler
+    setupSignupButton();
 
   } catch (error) {
     console.error('Auth init failed:', error.message);
@@ -106,6 +113,10 @@ function isPublicPage() {
 function updateUserProfile(email) {
   const userProfile = document.getElementById('userProfile');
   if (userProfile) userProfile.textContent = email || 'User Profile';
+  const welcomeUserName = document.getElementById('welcomeUserName');
+  const sidebarUserName = document.getElementById('sidebarUserName');
+  if (welcomeUserName) welcomeUserName.textContent = email.split('@')[0] || 'User';
+  if (sidebarUserName) sidebarUserName.textContent = email.split('@')[0] || 'User';
 }
 
 function showFeedback(message) {
@@ -137,7 +148,7 @@ function setupLoginButtons() {
       googleLoginBtn.disabled = true;
       try {
         const redirectUrl = `${window.location.origin}/dashboard.html`;
-        console.log('Redirecting to:', redirectUrl);
+        console.log('Google redirect to:', redirectUrl);
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: { redirectTo: redirectUrl }
@@ -173,6 +184,7 @@ function setupLoginButtons() {
       try {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        console.log('Email login successful');
       } catch (error) {
         console.error('Email login error:', error.message);
         showFeedback('Login failed: ' + error.message);
@@ -202,11 +214,11 @@ function setupSignupButton() {
         });
         if (error) throw error;
         console.log('Signup successful:', data);
-        showFeedback('Signup successful! Check your email to confirm, then log in.');
-        // Optionally auto-login if Supabase logs in immediately (depends on settings)
         if (data.session) {
           await supabase.auth.setSession(data.session);
           window.location.href = '/dashboard.html';
+        } else {
+          showFeedback('Signup successful! Check your email to confirm, then log in.');
         }
       } catch (error) {
         console.error('Signup error:', error.message);

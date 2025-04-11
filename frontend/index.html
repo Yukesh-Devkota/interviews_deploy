@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interviews Assist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> <!-- Matching the image font style -->
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/index.css">
   <link rel="manifest" href="/manifest.json">
@@ -13,41 +13,35 @@
 <body>
   <div class="main-content">
     <div class="hero-bg"></div>
-    <header class="header">
-      <div class="logo">Interviews <span>Assist</span></div>
-      <button class="signup-btn" id="signupBtn">Get Started</button>
-    </header>
-
     <div class="container">
       <!-- Hero Section (Two-Column) -->
       <section class="hero-section">
         <div class="hero-left">
-          <h1>Welcome to Interviews Assist</h1>
-          <p class="hero-subtitle">Your guide to overcoming interview anxiety with confidence.</p>
-          <button class="action-btn" id="exploreBtn">Explore Now</button>
+          <h1>Welcome to <span>Inter</span><span>Assist</span></h1>
+          <p>Your guide to overcoming interview anxiety with confidence.</p>
+          <button class="action-btn" id="exploreBtn">Begin Now</button>
         </div>
         <div class="hero-right">
-          <p class="description">Interviews Assist empowers freshers and professionals to master interviews with cutting-edge AI tools. Benefit from real-time feedback, scenario-based training, and progress tracking to build your confidence and ace every opportunity.</p>
+          <h2>About Us</h2>
+          <p>Discover a transformative journey with Interviews Assist, where AI meets innovation. Our unique approach blends personalized coaching with real-world simulations, helping you conquer interviews with unparalleled ease.</p>
+          <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1350" alt="Inspirational Landscape" class="about-image">
         </div>
       </section>
 
-      <!-- Article/Info Cards Section -->
-      <section class="cards-section">
-        <div class="card-container">
-          <div class="info-card">
-            <div class="card-icon">🎯</div>
-            <h2>Personalized Training</h2>
-            <p>Tailored scenarios to match your experience level and prepare you effectively.</p>
+      <!-- Article Section -->
+      <section class="articles-section">
+        <div class="article-container">
+          <div class="article-card">
+            <h3>Master Your Skills</h3>
+            <p>Learn proven techniques to shine in any interview with our AI-driven practice sessions.</p>
           </div>
-          <div class="info-card">
-            <div class="card-icon">💡</div>
-            <h2>Real-Time Feedback</h2>
-            <p>Get instant insights to refine your responses during practice sessions.</p>
+          <div class="article-card">
+            <h3>Build Confidence</h3>
+            <p>Overcome nervousness with tailored feedback and scenario-based training.</p>
           </div>
-          <div class="info-card">
-            <div class="card-icon">📈</div>
-            <h2>Progress Tracking</h2>
-            <p>Monitor your growth and identify areas for improvement over time.</p>
+          <div class="article-card">
+            <h3>Track Your Growth</h3>
+            <p>Monitor your progress with detailed analytics to ensure continuous improvement.</p>
           </div>
         </div>
       </section>
@@ -58,16 +52,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const exploreBtn = document.getElementById('exploreBtn');
-      const signupBtn = document.getElementById('signupBtn');
 
       if (exploreBtn) {
         exploreBtn.addEventListener('click', () => {
-          window.location.href = '/login.html';
-        });
-      }
-
-      if (signupBtn) {
-        signupBtn.addEventListener('click', () => {
           window.location.href = '/login.html';
         });
       }

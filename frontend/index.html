@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interviews Assist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/index.css">
   <link rel="manifest" href="/manifest.json">
@@ -13,60 +13,43 @@
 <body>
   <div class="main-content">
     <div class="hero-bg"></div>
-    <div class="glassy-overlay"></div>
-    <header class="motto-header">
-      <h1>Empower Your Confidence, Conquer Your Interview</h1>
+    <header class="header">
+      <div class="logo">Interviews <span>Assist</span></div>
+      <button class="signup-btn" id="signupBtn">Get Started</button>
     </header>
 
     <div class="container">
-      <!-- Hero Section -->
-      <header class="hero-section">
-        <div class="hero-content">
+      <!-- Hero Section (Two-Column) -->
+      <section class="hero-section">
+        <div class="hero-left">
           <h1>Welcome to Interviews Assist</h1>
           <p class="hero-subtitle">Your guide to overcoming interview anxiety with confidence.</p>
-          <button class="get-started-btn" id="exploreBtn">Explore Now</button>
+          <button class="action-btn" id="exploreBtn">Explore Now</button>
         </div>
-      </header>
-
-      <!-- Article Section -->
-      <section class="article-section">
-        <h2>About Interviews Assist</h2>
-        <div class="article-content">
-          <p>Interviews Assist is designed to help freshers and professionals build confidence for interviews. Our platform uses AI-driven tools to provide personalized support and reduce anxiety.</p>
-          <ul>
-            <li>Real-time feedback during practice.</li>
-            <li>Customized scenarios for all levels.</li>
-            <li>Progress tracking to improve skills.</li>
-          </ul>
+        <div class="hero-right">
+          <p class="description">Interviews Assist empowers freshers and professionals to master interviews with cutting-edge AI tools. Benefit from real-time feedback, scenario-based training, and progress tracking to build your confidence and ace every opportunity.</p>
         </div>
       </section>
 
-      <!-- Features Section -->
-      <section class="features-section">
-        <h2>Key Features</h2>
-        <div class="feature-cards">
-          <div class="feature-card">
-            <div class="feature-icon">🎯</div>
-            <h3>Personalized Practice</h3>
-            <p>Tailored scenarios to match your experience level.</p>
+      <!-- Article/Info Cards Section -->
+      <section class="cards-section">
+        <div class="card-container">
+          <div class="info-card">
+            <div class="card-icon">🎯</div>
+            <h2>Personalized Training</h2>
+            <p>Tailored scenarios to match your experience level and prepare you effectively.</p>
           </div>
-          <div class="feature-card">
-            <div class="feature-icon">💡</div>
-            <h3>Instant Feedback</h3>
-            <p>Get real-time tips to enhance your performance.</p>
+          <div class="info-card">
+            <div class="card-icon">💡</div>
+            <h2>Real-Time Feedback</h2>
+            <p>Get instant insights to refine your responses during practice sessions.</p>
           </div>
-          <div class="feature-card">
-            <div class="feature-icon">📈</div>
-            <h3>Progress Tracking</h3>
-            <p>Monitor your improvement over time.</p>
+          <div class="info-card">
+            <div class="card-icon">📈</div>
+            <h2>Progress Tracking</h2>
+            <p>Monitor your growth and identify areas for improvement over time.</p>
           </div>
         </div>
-      </section>
-
-      <!-- Call-To-Action Section -->
-      <section class="cta-section">
-        <h2>Ready to Start?</h2>
-        <button class="action-btn" id="startBtn">Get Started</button>
       </section>
     </div>
   </div>
@@ -75,7 +58,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const exploreBtn = document.getElementById('exploreBtn');
-      const startBtn = document.getElementById('startBtn');
+      const signupBtn = document.getElementById('signupBtn');
 
       if (exploreBtn) {
         exploreBtn.addEventListener('click', () => {
@@ -83,8 +66,8 @@
         });
       }
 
-      if (startBtn) {
-        startBtn.addEventListener('click', () => {
+      if (signupBtn) {
+        signupBtn.addEventListener('click', () => {
           window.location.href = '/login.html';
         });
       }

@@ -77,17 +77,6 @@ span {
   color: var(--text-color);
 }
 
-a {
-  color: var(--secondary-color);
-  font-size: 14px;
-  text-decoration: none;
-  margin: 15px 0;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 button {
   border-radius: 20px;
   border: 1px solid var(--golden-accent);
@@ -100,6 +89,7 @@ button {
   text-transform: uppercase;
   transition: transform 0.2s ease-in, box-shadow 0.2s ease;
   cursor: pointer;
+  margin: 5px 0;
 }
 
 button:active {
@@ -118,6 +108,18 @@ button.ghost {
 
 button.ghost:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+.toggle-btn {
+  background-color: transparent;
+  border-color: var(--secondary-color);
+  color: var(--secondary-color);
+  margin-top: 10px;
+}
+
+.toggle-btn:hover {
+  background-color: var(--secondary-color);
+  color: white;
 }
 
 form {
@@ -164,11 +166,11 @@ input:focus {
   top: 0;
   height: 100%;
   transition: all 0.6s ease-in-out;
+  width: 50%;
 }
 
 .sign-in-container {
   left: 0;
-  width: 50%;
   z-index: 2;
 }
 
@@ -178,7 +180,6 @@ input:focus {
 
 .sign-up-container {
   left: 0;
-  width: 50%;
   opacity: 0;
   z-index: 1;
 }
@@ -217,7 +218,7 @@ input:focus {
 }
 
 .overlay {
-  background: var(--secondary-color); /* Single color to avoid overlap */
+  background: var(--secondary-color);
   color: white;
   position: relative;
   left: -100%;
@@ -291,35 +292,60 @@ input:focus {
   p {
     font-size: 12px;
   }
+  button {
+    padding: 10px 30px;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
   .container {
     flex-direction: column;
     height: auto;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
   }
   .form-container {
-    width: 100%;
     position: static;
+    width: 100%;
+    height: auto;
     padding: 20px;
+    opacity: 1;
+    z-index: 5;
+    transform: translateX(0);
+    transition: opacity 0.6s ease-in-out;
+  }
+  .sign-in-container {
+    display: block;
+  }
+  .container.right-panel-active .sign-in-container {
+    opacity: 0;
+    z-index: 1;
+  }
+  .sign-up-container {
+    display: none;
+  }
+  .container.right-panel-active .sign-up-container {
+    display: block;
+    opacity: 1;
+    z-index: 5;
   }
   .overlay-container {
-    width: 100%;
-    left: 0;
+    display: none;
   }
-  .overlay {
-    width: 100%;
-    left: 0;
-    transform: translateX(0);
+  .toggle-btn {
+    display: block;
+    margin-top: 15px;
   }
-  .container.right-panel-active .overlay {
-    transform: translateX(0);
+  h1 {
+    font-size: 28px;
   }
-  .overlay-panel {
-    width: 100%;
-    transform: translateX(0);
+  input {
+    padding: 10px;
   }
-  .overlay-left, .container.right-panel-active .overlay-right {
-    transform: translateX(0);
+  button {
+    padding: 12px 40px;
+    font-size: 14px;
   }
 }

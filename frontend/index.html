@@ -5,86 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instant Interview Assistant</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles.css"> <!-- Global CSS -->
-  <link rel="stylesheet" href="/css/index.css">  <!-- Page-specific CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/index.css">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <div class="main-content">
-    <div class="hero-bg">
-      <div class="glassy-overlay"></div>
-    </div>
+    <div class="vibrant-bg"></div>
+    <nav class="top-nav">
+      <div class="logo">Instant Interview <span>AI</span></div>
+      <ul class="nav-links">
+        <li><a href="#">Application</a></li>
+        <li><a href="#">AI Mock Interview</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Resources</a></li>
+        <li><a href="#">Question Bank</a></li>
+        <li><a href="#" class="btn sign-in">Sign In</a></li>
+        <li><a href="#" class="btn sign-up">Sign Up</a></li>
+      </ul>
+    </nav>
+
     <div class="container">
       <!-- Hero Section -->
       <header class="hero-section">
         <div class="hero-content">
-          <h1>Instant Interview Assistant</h1>
-          <p class="hero-subtitle">Your AI-Powered Path to Interview Success</p>
-          <button class="action-btn get-started-btn" id="getStartedBtn">Get Started Now</button>
+          <h1>Unlock Your Interview Superpowers with AI</h1>
+          <p class="hero-subtitle">Your AI-Powered Interview Copilot</p>
+          <div class="stats">
+            <span>250K+ Offers Received</span> | <span>1.2M+ Interviews Aced</span>
+          </div>
+          <button class="action-btn" id="getStartedBtn">Activate AI Interview Mode Now</button>
+          <p class="hero-note">Interview Copilot™ generating actionable guidance for interviews in real-time</p>
         </div>
       </header>
 
+      <!-- Side Panels -->
+      <div class="side-panels">
+        <div class="transcript-panel">
+          <h3>Live Interview Transcript</h3>
+          <div class="transcript-content">
+            <p><strong>Interviewer:</strong> Can you tell me about a challenge you faced?</p>
+            <p><strong>You:</strong> Yes, I managed a tight deadline by prioritizing tasks and collaborating with my team.</p>
+            <p><strong>Interviewer:</strong> How did you handle the pressure?</p>
+            <p><strong>You:</strong> I stayed calm, broke it into steps, and maintained clear communication.</p>
+          </div>
+        </div>
+        <div class="code-panel">
+          <h3>Sample Code</h3>
+          <pre>
+            <code>
+function handleChallenge(challenge) {
+  const response = `I handled a ${challenge} by staying organized and teamwork.`;
+  console.log(response);
+  return response;
+}
+handleChallenge("tight deadline");
+            </code>
+          </pre>
+          <button class="action-btn code-btn">Run Code</button>
+        </div>
+      </div>
+
       <!-- Article Section -->
       <section class="article-section">
-        <h2>Prepare Smarter, Interview Better</h2>
+        <h2>Overcome Interview Anxiety with Confidence</h2>
         <div class="article-content">
-          <p>At Instant Interview Assistant, we revolutionize interview preparation with advanced AI technology. Whether you're a seasoned professional or a fresher, our platform helps you overcome challenges and shine in interviews. Here’s how we support you:</p>
+          <p>Instant Interview Assistant empowers you to conquer interview fear using AI technology. Perfect for freshers and professionals alike, our tools provide:</p>
           <ul>
-            <li><strong>Real-Time Practice:</strong> Simulate interviews with speech recognition and instant, actionable feedback.</li>
-            <li><strong>Personalized Questions:</strong> Tailored questions based on your resume and job role for a customized experience.</li>
-            <li><strong>Progress Tracking:</strong> Monitor your growth with detailed insights and analytics to boost confidence.</li>
+            <li><strong>Real-Time Feedback:</strong> Instant tips during practice.</li>
+            <li><strong>Custom Scenarios:</strong> Tailored to your experience.</li>
+            <li><strong>Progress Tracking:</strong> Monitor your growth over time.</li>
           </ul>
-          <h3>Overcoming Interview Fear</h3>
-          <p>Many individuals know their material well but struggle with interview anxiety. This website is designed for those who fear interviews despite their expertise. Our tools help you practice in a safe environment, build confidence, and speak effectively to land your dream job.</p>
-          <h3>Challenges for Freshers</h3>
-          <p>Freshers often face unique hurdles when entering the job market. Lack of experience, nervousness, and difficulty articulating knowledge can hinder their performance. Instant Interview Assistant addresses these issues by offering:</p>
-          <ul>
-            <li><strong>Mock Interviews:</strong> Practice with realistic scenarios to reduce anxiety.</li>
-            <li><strong>Skill Enhancement:</strong> Improve communication and presentation skills tailored to entry-level roles.</li>
-            <li><strong>Feedback Loop:</strong> Receive constructive feedback to refine your approach before the real interview.</li>
-          </ul>
-          <p>Join thousands who’ve transformed their interview skills. Your dream job is within reach—start your journey today!</p>
-        </div>
-        <!-- Dummy Comments Section -->
-        <div class="comments-section">
-          <h3>What Users Say</h3>
-          <div class="comment">
-            <p><strong>John D.</strong> - "This tool helped me overcome my interview fear! The feedback was spot on."</p>
-          </div>
-          <div class="comment">
-            <p><strong>Sarah K.</strong> - "As a fresher, I was nervous, but the personalized practice made all the difference."</p>
-          </div>
-          <div class="comment">
-            <p><strong>Mike T.</strong> - "Amazing platform! I landed my dream job thanks to the progress tracking."</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Features Section -->
-      <section class="features-section">
-        <h2>Why Choose Us?</h2>
-        <div class="feature-cards">
-          <div class="feature-card">
-            <div class="feature-icon">🎙️</div>
-            <h3>Live Interview Practice</h3>
-            <p>Practice in real-time with AI-driven feedback to perfect your responses.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📄</div>
-            <h3>Personalized Experience</h3>
-            <p>Get questions crafted just for you based on your unique profile.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Track Your Progress</h3>
-            <p>Monitor your improvement with a sleek dashboard and session history.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">💡</div>
-            <h3>Confidence Building</h3>
-            <p>Overcome anxiety with guided sessions and expert tips.</p>
-          </div>
+          <p>Join thousands who’ve succeeded—start now!</p>
         </div>
       </section>
 
@@ -98,31 +91,27 @@
 
   <script src="/js/ui.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM fully loaded');
       const getStartedBtn = document.getElementById('getStartedBtn');
       const startInterviewBtn = document.getElementById('startInterviewBtn');
 
       if (getStartedBtn) {
         getStartedBtn.addEventListener('click', () => {
-          console.log('Get Started button clicked');
-          window.location.href = '/login.html';
-        });
-        getStartedBtn.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          console.log('Get Started button touched');
           window.location.href = '/login.html';
         });
       }
 
       if (startInterviewBtn) {
         startInterviewBtn.addEventListener('click', () => {
-          console.log('Start Interview button clicked');
           window.location.href = '/login.html';
+        });
+      }
+
+      const codeBtn = document.querySelector('.code-btn');
+      if (codeBtn) {
+        codeBtn.addEventListener('click', () => {
+          alert('Code executed: Check console for output!');
+          console.log('Interview response generated!');
         });
       }
     });

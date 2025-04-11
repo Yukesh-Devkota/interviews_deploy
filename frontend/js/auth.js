@@ -155,6 +155,13 @@ function handleAuthForm() {
   }
 }
 
+// Placeholder for future password reset implementation
+/*function resetPassword(email) {
+  supabase.auth.resetPasswordForEmail(email)
+    .then(response => showFeedback('Password reset link sent! Check your email.'))
+    .catch(error => showFeedback('Error resetting password: ' + error.message));
+}*/
+
 document.addEventListener('DOMContentLoaded', () => {
   if (!isAuthInitialized) initializeAuth();
 });

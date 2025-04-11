@@ -38,45 +38,18 @@ async function initializeAuth() {
     await waitForSupabaseScript();
     if (!await initializeSupabase()) throw new Error('Supabase init failed');
 
-    // Handle Google OAuth token from URL hash
-    const hash = window.location.hash;
-    if (hash && hash.includes('access_token')) {
-      console.log('Access token in URL:', hash);
-      const params = new URLSearchParams(hash.replace('#', ''));
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
-      if (accessToken && refreshToken) {
-        const { error } = await supabase.auth.setSession({ 
-          access_token: accessToken, 
-          refresh_token: refreshToken 
-        });
-        if (error) throw error;
-        console.log('Session set from Google OAuth');
-        // Redirect to clean URL to avoid hash issues
-        window.location = '/dashboard.html';
-        return;
-      }
-    }
-
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) console.error('Session error:', error.message);
     else if (session) {
       console.log('Active session:', session);
       localStorage.setItem('isLoggedIn', 'true');
       updateUserProfile(session.user.email);
-      if (isLoginPage()) {
-        console.log('Redirecting to dashboard.html');
-        window.location.href = '/dashboard.html';
-        return;
-      }
+      if (isLoginPage()) window.location.href = '/dashboard.html';
+      return;
     } else {
       console.log('No session');
       localStorage.removeItem('isLoggedIn');
-      if (!isPublicPage()) {
-        console.log('Redirecting to login.html');
-        window.location.href = '/login.html';
-        return;
-      }
+      handleAuthForm();
     }
 
     supabase.auth.onAuthStateChange((event, session) => {
@@ -92,13 +65,9 @@ async function initializeAuth() {
       }
     });
 
-    setupLoginButtons();
-    setupSignupButton();
-
   } catch (error) {
     console.error('Auth init failed:', error.message);
     showFeedback('Auth unavailable. Refresh the page.');
-    setupLoginButtonsWithError();
   }
 }
 
@@ -120,7 +89,7 @@ function updateUserProfile(email) {
 }
 
 function showFeedback(message) {
-  const feedback = document.getElementById('loginError');
+  const feedback = document.getElementById('authFeedback');
   if (feedback) {
     feedback.textContent = message;
     feedback.classList.add('show');
@@ -128,105 +97,60 @@ function showFeedback(message) {
   }
 }
 
-function setupLoginButtonsWithError() {
-  const googleLoginBtn = document.getElementById('googleLoginBtn');
-  if (googleLoginBtn) googleLoginBtn.addEventListener('click', () => showFeedback('Auth not ready. Try later.'));
+function handleAuthForm() {
+  const loginForm = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
+  const activePanel = document.querySelector('.slider-panel.active');
 
-  const emailLoginBtn = document.getElementById('emailLoginBtn');
-  const emailForm = document.getElementById('emailForm');
-  if (emailLoginBtn && emailForm) {
-    emailLoginBtn.addEventListener('click', () => {
-      emailForm.style.display = emailForm.style.display === 'none' ? 'flex' : 'none';
-    });
-  }
-}
-
-function setupLoginButtons() {
-  const googleLoginBtn = document.getElementById('googleLoginBtn');
-  if (googleLoginBtn) {
-    googleLoginBtn.addEventListener('click', async () => {
-      googleLoginBtn.disabled = true;
-      try {
-        const redirectUrl = `${window.location.origin}/dashboard.html`;
-        console.log('Google redirect to:', redirectUrl);
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: redirectUrl }
-        });
-        if (error) throw error;
-      } catch (error) {
-        console.error('Google login error:', error.message);
-        showFeedback('Google login failed: ' + error.message);
-      } finally {
-        googleLoginBtn.disabled = false;
-      }
-    });
-  }
-
-  const emailLoginBtn = document.getElementById('emailLoginBtn');
-  const emailForm = document.getElementById('emailForm');
-  if (emailLoginBtn && emailForm) {
-    emailLoginBtn.addEventListener('click', () => {
-      emailForm.style.display = emailForm.style.display === 'none' ? 'flex' : 'none';
-    });
-  }
-
-  const submitEmailLogin = document.getElementById('submitEmailLogin');
-  if (submitEmailLogin) {
-    submitEmailLogin.addEventListener('click', async () => {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      if (!email || !password) {
-        showFeedback('Please enter both email and password.');
-        return;
-      }
-      submitEmailLogin.disabled = true;
-      try {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        console.log('Email login successful');
-      } catch (error) {
-        console.error('Email login error:', error.message);
-        showFeedback('Login failed: ' + error.message);
-      } finally {
-        submitEmailLogin.disabled = false;
-      }
-    });
-  }
-}
-
-function setupSignupButton() {
-  const submitSignup = document.getElementById('submitSignup');
-  if (submitSignup) {
-    submitSignup.addEventListener('click', async () => {
-      const email = document.getElementById('signupEmail').value.trim();
-      const password = document.getElementById('signupPassword').value.trim();
-      if (!email || !password) {
-        showFeedback('Please enter both email and password.');
-        return;
-      }
-      submitSignup.disabled = true;
-      try {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/dashboard.html` }
-        });
-        if (error) throw error;
-        console.log('Signup successful:', data);
-        if (data.session) {
-          await supabase.auth.setSession(data.session);
-          window.location.href = '/dashboard.html';
-        } else {
-          showFeedback('Signup successful! Check your email to confirm, then log in.');
+  if (activePanel.classList.contains('login-panel')) {
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        if (!email || !password) {
+          showFeedback('Please enter both email and password.');
+          return;
         }
-      } catch (error) {
-        console.error('Signup error:', error.message);
-        showFeedback('Signup failed: ' + error.message);
-      } finally {
-        submitSignup.disabled = false;
-      }
-    });
+        try {
+          const { error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+        } catch (error) {
+          console.error('Login error:', error.message);
+          showFeedback('Login failed: ' + error.message);
+        }
+      });
+    }
+  } else if (activePanel.classList.contains('signup-panel')) {
+    if (signupForm) {
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value.trim();
+        if (!email || !password) {
+          showFeedback('Please enter both email and password.');
+          return;
+        }
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: `${window.location.origin}/dashboard.html` }
+          });
+          if (error) throw error;
+          console.log('Signup successful:', data);
+          if (data.session) {
+            await supabase.auth.setSession(data.session);
+            window.location.href = '/dashboard.html';
+          } else {
+            showFeedback('Signup successful! Check your email to confirm, then log in.');
+          }
+        } catch (error) {
+          console.error('Signup error:', error.message);
+          showFeedback('Signup failed: ' + error.message);
+        }
+      });
+    }
   }
 }
 

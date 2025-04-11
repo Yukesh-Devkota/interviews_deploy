@@ -76,7 +76,7 @@ body {
   overflow: hidden;
   border-radius: 15px;
   box-shadow: var(--shadow);
-  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%23e0f7fa" fill-opacity="0.3" d="M0,64L48,80C96,96,192,128,288,138.7C384,149,480,139,576,138.7C672,139,768,149,864,149.3C960,149,1056,139,1152,138.7C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"%3E%3C/path%3E%3C/svg%3E') no-repeat center/cover;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 123, 255, 0.05));
 }
 
 .slider-panel {
@@ -99,12 +99,44 @@ body {
 }
 
 .signup-panel {
-  background: linear-gradient(135deg, var(--secondary-color), rgba(255, 255, 255, 0.2));
+  background: var(--container-bg);
+  color: var(--text-color);
 }
 
 .slider-panel.slide-out {
   transform: translateX(-100%);
   opacity: 0;
+}
+
+.call-to-action {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.handwritten {
+  font-size: 48px;
+  font-weight: 700;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  color: var(--text-color);
+  animation: bounce 1.5s infinite;
+}
+
+.signup-content {
+  transition: opacity 0.5s ease;
+}
+
+.signup-content.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.signup-content h1,
+.signup-content .subtitle,
+.signup-content .toggle-text {
+  color: var(--text-color);
 }
 
 .slider-panel h1 {
@@ -124,18 +156,19 @@ body {
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
-  color: white;
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid white;
-  border-radius: 10px;
+  color: var(--secondary-color);
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid var(--secondary-color);
+  border-radius: 25px;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 10px;
   transition: var(--transition);
 }
 
 .toggle-btn:hover {
-  background: white;
-  color: var(--secondary-color);
+  background: var(--secondary-color);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
 }
 
 .auth-form {
@@ -149,21 +182,17 @@ body {
   width: 100%;
   padding: 12px;
   font-size: 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-color);
   transition: var(--transition);
-}
-
-.auth-form input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .auth-form input:focus,
 .auth-form input:hover {
-  border-color: white;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  border-color: var(--secondary-color);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
   outline: none;
 }
 
@@ -173,7 +202,7 @@ body {
   font-weight: 600;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 25px;
   cursor: pointer;
   background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
   box-shadow: var(--shadow);
@@ -204,6 +233,11 @@ body {
   to { opacity: 1; }
 }
 
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 @keyframes gradientFlow {
   0% { background-position: 0% 0%; }
   50% { background-position: 100% 100%; }
@@ -228,6 +262,9 @@ body {
   .slider-panel h1 {
     font-size: 28px;
   }
+  .handwritten {
+    font-size: 36px;
+  }
   .subtitle {
     font-size: 14px;
   }
@@ -248,5 +285,8 @@ body {
   .auth-form input, .submit-btn {
     padding: 10px;
     font-size: 14px;
+  }
+  .handwritten {
+    font-size: 28px;
   }
 }

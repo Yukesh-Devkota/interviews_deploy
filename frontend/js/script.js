@@ -37,10 +37,26 @@ const questions = {
   behavioral: ['Tell me about a time you faced a challenge.', 'How do you handle stress?']
 };
 
+// Wait for Supabase initialization
+function initializeSupabase() {
+  return new Promise((resolve) => {
+    const checkSupabase = setInterval(() => {
+      if (window.supabase && typeof window.supabase.auth.getSession === 'function') {
+        clearInterval(checkSupabase);
+        console.log('Supabase initialized successfully');
+        resolve();
+      } else {
+        console.log('Waiting for Supabase initialization...');
+      }
+    }, 100);
+  });
+}
+
 // Initialize Speech Recognition
-function initializeSpeechRecognition() {
+async function initializeSpeechRecognition() {
   try {
     console.log('Initializing SpeechRecognition...');
+    await initializeSupabase(); // Wait for Supabase
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       console.error('SpeechRecognition API not supported in this browser.');
@@ -142,6 +158,12 @@ function initializeSpeechRecognition() {
 async function getAnswer(question) {
   try {
     const apiUrl = 'https://interviewsassist.netlify.app/.netlify/functions/getanswer';
+
+    // Check if Supabase is available
+    if (!window.supabase || typeof window.supabase.auth.getSession !== 'function') {
+      console.error('Supabase not initialized');
+      throw new Error('Supabase authentication is not available');
+    }
 
     const { data: { session } } = await window.supabase.auth.getSession();
     const token = session?.access_token;

@@ -7,7 +7,7 @@ async function waitForSupabaseScript(timeout = 10000) {
   const supabaseScript = document.getElementById('supabaseScript');
   if (!supabaseScript) throw new Error('Supabase script not found');
   return new Promise((resolve, reject) => {
-    if (typeof window.supabase !== 'undefined') return resolve();
+    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) return resolve();
     supabaseScript.addEventListener('load', resolve);
     supabaseScript.addEventListener('error', () => reject(new Error('Supabase script failed to load')));
     setTimeout(() => reject(new Error('Supabase script load timed out')), timeout);
@@ -17,11 +17,12 @@ async function waitForSupabaseScript(timeout = 10000) {
 async function initializeSupabase() {
   console.log('Initializing Supabase...');
   try {
-    supabase = window.supabase.createClient(
+    // Assign to window.supabase
+    window.supabase = supabase = supabase.createClient(
       'https://fadrnmgjulvdoymevqhf.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZHJubWdqdWx2ZG95bWV2cWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5OTA3NzEsImV4cCI6MjA1ODU2Njc3MX0.XvyVNkjvTiVA5i0Abs1WIIhY-5i9fXfoxMrgIiuoOsA'
     );
-    console.log('Supabase initialized');
+    console.log('Supabase initialized:', window.supabase);
     return true;
   } catch (error) {
     console.error('Supabase init failed:', error.message);
@@ -38,7 +39,7 @@ async function initializeAuth() {
     await waitForSupabaseScript();
     if (!await initializeSupabase()) throw new Error('Supabase init failed');
 
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const { data: { session }, error } = await window.supabase.auth.getSession();
     if (error) console.error('Session error:', error.message);
     else if (session) {
       console.log('Active session:', session);
@@ -52,7 +53,7 @@ async function initializeAuth() {
       handleAuthForms();
     }
 
-    supabase.auth.onAuthStateChange((event, session) => {
+    window.supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state:', event, session);
       if (event === 'SIGNED_IN' && session) {
         localStorage.setItem('isLoggedIn', 'true');
@@ -95,17 +96,17 @@ function handleAuthForms() {
   const submitLogin = document.getElementById('submitLogin');
   const submitSignup = document.getElementById('submitSignup');
 
-  if (loginForm.classList.contains('active')) {
+  if (loginForm && loginForm.classList.contains('active')) {
     submitLogin.addEventListener('click', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
+      const email = document.getElementById('email')?.value.trim();
+      const password = document.getElementById('password')?.value.trim();
       if (!email || !password) {
         showFeedback('loginError', 'Please enter both email and password.');
         return;
       }
       try {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } catch (error) {
         console.error('Login error:', error.message);
@@ -114,18 +115,18 @@ function handleAuthForms() {
     });
   }
 
-  if (signupForm.classList.contains('active')) {
+  if (signupForm && signupForm.classList.contains('active')) {
     submitSignup.addEventListener('click', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('signupName').value.trim();
-      const email = document.getElementById('signupEmail').value.trim();
-      const password = document.getElementById('signupPassword').value.trim();
+      const name = document.getElementById('signupName')?.value.trim();
+      const email = document.getElementById('signupEmail')?.value.trim();
+      const password = document.getElementById('signupPassword')?.value.trim();
       if (!name || !email || !password) {
         showFeedback('signupError', 'Please fill all fields.');
         return;
       }
       try {
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await window.supabase.auth.signUp({
           email,
           password,
           options: { data: { name }, emailRedirectTo: `${window.location.origin}/login.html` }
@@ -133,7 +134,7 @@ function handleAuthForms() {
         if (error) throw error;
         console.log('Signup successful:', data);
         if (data.session) {
-          await supabase.auth.setSession(data.session);
+          await window.supabase.auth.setSession(data.session);
           window.location.href = '/dashboard.html';
         } else {
           showFeedback('signupError', 'Signup successful! Check your email to confirm.');

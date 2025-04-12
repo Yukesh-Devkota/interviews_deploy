@@ -87,11 +87,14 @@
   <script>
     console.log('live-interview.html script loaded');
 
+    // Temporarily comment out service worker to test
+    /*
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(() => console.log('Service worker registered'))
         .catch(err => console.error('Service worker registration failed:', err));
     }
+    */
 
     document.addEventListener('DOMContentLoaded', () => {
       console.log('DOM fully loaded in live-interview.html');

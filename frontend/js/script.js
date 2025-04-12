@@ -93,8 +93,8 @@ function initializeSpeechRecognition() {
 
   recognition.onend = () => {
     console.log('Recognition ended, isListening:', isListening);
-    if (isListening) {
-      recognition.start(); // Restart only if intended
+    if (isListening && !recognition.error) {
+      setTimeout(() => recognition.start(), 100); // Delay to prevent rapid cycling
     } else {
       status.textContent = 'Stopped listening';
       hideWaveform();
@@ -114,7 +114,7 @@ function initializeSpeechRecognition() {
 async function getAnswer(question) {
   const apiUrl = 'https://interviewsassist.netlify.app/.netlify/functions/getanswer';
 
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await window.supabase.auth.getSession();
   const token = session?.access_token;
 
   console.log('Sending request to:', apiUrl);
@@ -155,7 +155,7 @@ function renderRating() {
       }
     });
   });
-  rating.querySelectorAll('span').forEach(s => s.classList.add('star')); // Optional styling
+  rating.querySelectorAll('span').forEach(s => s.classList.add('star'));
 }
 
 async function saveSession(question, userAnswer, aiAnswer, feedbackData, rating = null) {
@@ -252,7 +252,9 @@ languageSelect.addEventListener('change', () => {
   recognition.lang = languageSelect.value;
   if (isListening) {
     recognition.stop();
-    setTimeout(() => recognition.start(), 100); // Small delay to prevent immediate stop
+    setTimeout(() => {
+      if (isListening) recognition.start();
+    }, 100);
   }
 });
 

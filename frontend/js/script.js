@@ -1,12 +1,12 @@
-// Global error handler to prevent page reloads
+// Global error handler to prevent uncaught exceptions
 window.addEventListener('error', (event) => {
   console.error('Global error:', event.message, event.filename, event.lineno);
-  event.preventDefault(); // Prevent default behavior (e.g., reload)
+  event.preventDefault();
 });
 
 window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
-  event.preventDefault(); // Prevent default behavior
+  event.preventDefault();
 });
 
 // DOM Elements
@@ -40,19 +40,23 @@ const questions = {
 // Initialize Speech Recognition
 function initializeSpeechRecognition() {
   try {
+    console.log('Initializing SpeechRecognition...');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
+      console.error('SpeechRecognition API not supported in this browser.');
       status.textContent = 'Speech Recognition API not supported in this browser.';
       startBtn.disabled = true;
       return;
     }
 
     recognition = new SpeechRecognition();
+    console.log('SpeechRecognition initialized with lang:', languageSelect.value);
     recognition.lang = languageSelect.value;
     recognition.interimResults = true;
     recognition.continuous = true;
 
     recognition.onresult = async (event) => {
+      console.log('onresult triggered, results length:', event.results.length);
       let interimTranscript = '';
       let finalTranscript = '';
 
@@ -95,20 +99,25 @@ function initializeSpeechRecognition() {
     };
 
     recognition.onerror = (event) => {
-      status.textContent = `Error occurred: ${event.error}`;
-      console.error('Recognition Error:', event.error);
+      console.error('Recognition error:', event.error, event.message);
+      status.textContent = `Error occurred: ${event.error} - ${event.message || 'No message'}`;
       if (event.error === 'not-allowed' || event.error === 'permission-denied') {
         alert('Microphone access denied. Please allow permission in your browser.');
+      } else if (event.error === 'no-speech' || event.error === 'aborted') {
+        status.textContent += ' Please try again or check your microphone.';
       }
       stopListening();
     };
 
     recognition.onend = () => {
-      console.log('Recognition ended, isListening:', isListening);
+      console.log('Recognition ended, isListening:', isListening, 'error:', recognition.error);
       if (isListening && !recognition.error) {
         setTimeout(() => {
-          if (isListening) recognition.start(); // Delayed restart
-        }, 100);
+          if (isListening) {
+            console.log('Restarting recognition...');
+            recognition.start();
+          }
+        }, 100); // Delay to prevent rapid cycling
       } else {
         status.textContent = 'Stopped listening';
         hideWaveform();
@@ -124,7 +133,7 @@ function initializeSpeechRecognition() {
     };
   } catch (error) {
     console.error('SpeechRecognition initialization error:', error);
-    status.textContent = 'Failed to initialize speech recognition.';
+    status.textContent = 'Failed to initialize speech recognition: ' + error.message;
     startBtn.disabled = true;
   }
 }
@@ -137,7 +146,7 @@ async function getAnswer(question) {
     const { data: { session } } = await window.supabase.auth.getSession();
     const token = session?.access_token;
 
-    console.log('Sending request to:', apiUrl);
+    console.log('Sending request to:', apiUrl, 'with token:', !!token);
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -152,9 +161,11 @@ async function getAnswer(question) {
       console.error('Fetch Error:', { status: response.status, errorText });
       throw new Error(`Failed to fetch answer: ${response.status} - ${errorText}`);
     }
-    return await response.json();
+    const data = await response.json();
+    console.log('API Response:', data);
+    return data;
   } catch (error) {
-    throw error; // Re-throw to be caught by caller
+    throw error;
   }
 }
 
@@ -246,6 +257,7 @@ async function shareSession() {
 startBtn.addEventListener('click', () => {
   if (!isListening) {
     try {
+      console.log('Starting recognition...');
       recognition.start();
       isListening = true;
       status.textContent = 'Listening...';
@@ -258,7 +270,7 @@ startBtn.addEventListener('click', () => {
       stopBtn.disabled = false;
     } catch (error) {
       console.error('Start error:', error);
-      status.textContent = 'Failed to start listening.';
+      status.textContent = 'Failed to start listening: ' + error.message;
     }
   }
 });
@@ -269,6 +281,7 @@ stopBtn.addEventListener('click', () => {
 
 function stopListening() {
   try {
+    console.log('Stopping recognition...');
     recognition.stop();
     isListening = false;
     status.textContent = 'Stopped listening';
@@ -299,9 +312,10 @@ shareBtn.addEventListener('click', shareSession);
 
 // Initialize
 try {
+  console.log('Initializing application...');
   initializeSpeechRecognition();
   updateHistory();
 } catch (error) {
   console.error('Initialization error:', error);
-  status.textContent = 'Failed to initialize.';
+  status.textContent = 'Failed to initialize: ' + error.message;
 }

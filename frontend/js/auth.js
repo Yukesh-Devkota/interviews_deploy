@@ -5,19 +5,33 @@ let isAuthInitialized = false;
 
 async function waitForSupabaseScript(timeout = 10000) {
   const supabaseScript = document.getElementById('supabaseScript');
-  if (!supabaseScript) throw new Error('Supabase script not found');
+  if (!supabaseScript) {
+    console.error('Supabase script not found');
+    throw new Error('Supabase script not found');
+  }
   return new Promise((resolve, reject) => {
-    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) return resolve();
-    supabaseScript.addEventListener('load', resolve);
-    supabaseScript.addEventListener('error', () => reject(new Error('Supabase script failed to load')));
-    setTimeout(() => reject(new Error('Supabase script load timed out')), timeout);
+    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+      console.log('Supabase already available');
+      resolve();
+    }
+    supabaseScript.addEventListener('load', () => {
+      console.log('Supabase script loaded');
+      resolve();
+    });
+    supabaseScript.addEventListener('error', () => {
+      console.error('Supabase script failed to load');
+      reject(new Error('Supabase script failed to load'));
+    });
+    setTimeout(() => {
+      console.error('Supabase script load timed out');
+      reject(new Error('Supabase script load timed out'));
+    }, timeout);
   });
 }
 
 async function initializeSupabase() {
   console.log('Initializing Supabase...');
   try {
-    // Assign to window.supabase
     window.supabase = supabase = supabase.createClient(
       'https://fadrnmgjulvdoymevqhf.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZHJubWdqdWx2ZG95bWV2cWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5OTA3NzEsImV4cCI6MjA1ODU2Njc3MX0.XvyVNkjvTiVA5i0Abs1WIIhY-5i9fXfoxMrgIiuoOsA'

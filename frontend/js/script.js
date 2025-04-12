@@ -1,3 +1,14 @@
+// Global error handler to prevent page reloads
+window.addEventListener('error', (event) => {
+  console.error('Global error:', event.message, event.filename, event.lineno);
+  event.preventDefault(); // Prevent default behavior (e.g., reload)
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+  event.preventDefault(); // Prevent default behavior
+});
+
 // DOM Elements
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
@@ -28,111 +39,123 @@ const questions = {
 
 // Initialize Speech Recognition
 function initializeSpeechRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    status.textContent = 'Speech Recognition API not supported in this browser.';
-    startBtn.disabled = true;
-    return;
-  }
+  try {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      status.textContent = 'Speech Recognition API not supported in this browser.';
+      startBtn.disabled = true;
+      return;
+    }
 
-  recognition = new SpeechRecognition();
-  recognition.lang = languageSelect.value;
-  recognition.interimResults = true;
-  recognition.continuous = true;
+    recognition = new SpeechRecognition();
+    recognition.lang = languageSelect.value;
+    recognition.interimResults = true;
+    recognition.continuous = true;
 
-  recognition.onresult = async (event) => {
-    let interimTranscript = '';
-    let finalTranscript = '';
+    recognition.onresult = async (event) => {
+      let interimTranscript = '';
+      let finalTranscript = '';
 
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        finalTranscript += transcript;
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      liveTranscript.textContent = interimTranscript || finalTranscript;
+      console.log('Transcript:', { interimTranscript, finalTranscript });
+
+      if (finalTranscript) {
+        const selectedQuestion = customQuestion.value || 
+          (questionSet.value ? questions[questionSet.value][Math.floor(Math.random() * questions[questionSet.value].length)] : finalTranscript);
+        
+        questionSpan.textContent = selectedQuestion;
+        liveTranscript.textContent = finalTranscript;
+        showSpinner();
+
+        try {
+          const { answer, feedback: feedbackData } = await getAnswer(selectedQuestion);
+          answerSpan.textContent = answer || 'No answer generated.';
+          renderRating();
+          currentSession = { question: selectedQuestion, userAnswer: finalTranscript, aiAnswer: answer, feedback: feedbackData, timestamp: new Date().toISOString() };
+          saveSession(selectedQuestion, finalTranscript, answer, feedbackData);
+          displayFeedback(feedbackData);
+          updateHistory();
+        } catch (error) {
+          console.error('API Error:', error);
+          answerSpan.textContent = 'Error fetching answer: ' + (error.message || 'Unknown error');
+          feedback.textContent = 'Failed to generate answer.';
+        } finally {
+          hideSpinner();
+        }
+      }
+    };
+
+    recognition.onerror = (event) => {
+      status.textContent = `Error occurred: ${event.error}`;
+      console.error('Recognition Error:', event.error);
+      if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+        alert('Microphone access denied. Please allow permission in your browser.');
+      }
+      stopListening();
+    };
+
+    recognition.onend = () => {
+      console.log('Recognition ended, isListening:', isListening);
+      if (isListening && !recognition.error) {
+        setTimeout(() => {
+          if (isListening) recognition.start(); // Delayed restart
+        }, 100);
       } else {
-        interimTranscript += transcript;
+        status.textContent = 'Stopped listening';
+        hideWaveform();
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
       }
-    }
+    };
 
-    liveTranscript.textContent = interimTranscript || finalTranscript;
-    console.log('Transcript:', { interimTranscript, finalTranscript });
-
-    if (finalTranscript) {
-      const selectedQuestion = customQuestion.value || 
-        (questionSet.value ? questions[questionSet.value][Math.floor(Math.random() * questions[questionSet.value].length)] : finalTranscript);
-      
-      questionSpan.textContent = selectedQuestion;
-      liveTranscript.textContent = finalTranscript;
-      showSpinner();
-
-      try {
-        const { answer, feedback: feedbackData } = await getAnswer(selectedQuestion);
-        answerSpan.textContent = answer || 'No answer generated.';
-        renderRating();
-        currentSession = { question: selectedQuestion, userAnswer: finalTranscript, aiAnswer: answer, feedback: feedbackData, timestamp: new Date().toISOString() };
-        saveSession(selectedQuestion, finalTranscript, answer, feedbackData);
-        displayFeedback(feedbackData);
-        updateHistory();
-      } catch (error) {
-        console.error('API Error:', error);
-        answerSpan.textContent = 'Error fetching answer: ' + (error.message || 'Unknown error');
-        feedback.textContent = 'Failed to generate answer.';
-      } finally {
-        hideSpinner();
-      }
-    }
-  };
-
-  recognition.onerror = (event) => {
-    status.textContent = `Error occurred: ${event.error}`;
-    console.error('Recognition Error:', event.error);
-    if (event.error === 'not-allowed' || event.error === 'permission-denied') {
-      alert('Microphone access denied. Please allow permission in your browser.');
-    }
-    stopListening();
-  };
-
-  recognition.onend = () => {
-    console.log('Recognition ended, isListening:', isListening);
-    if (isListening && !recognition.error) {
-      setTimeout(() => recognition.start(), 100); // Delay to prevent rapid cycling
-    } else {
-      status.textContent = 'Stopped listening';
-      hideWaveform();
-      startBtn.disabled = false;
-      stopBtn.disabled = true;
-    }
-  };
-
-  recognition.onstart = () => {
-    console.log('Recognition started');
-    status.textContent = 'Listening...';
-    showWaveform();
-  };
+    recognition.onstart = () => {
+      console.log('Recognition started');
+      status.textContent = 'Listening...';
+      showWaveform();
+    };
+  } catch (error) {
+    console.error('SpeechRecognition initialization error:', error);
+    status.textContent = 'Failed to initialize speech recognition.';
+    startBtn.disabled = true;
+  }
 }
 
 // API Call to Netlify Function
 async function getAnswer(question) {
-  const apiUrl = 'https://interviewsassist.netlify.app/.netlify/functions/getanswer';
+  try {
+    const apiUrl = 'https://interviewsassist.netlify.app/.netlify/functions/getanswer';
 
-  const { data: { session } } = await window.supabase.auth.getSession();
-  const token = session?.access_token;
+    const { data: { session } } = await window.supabase.auth.getSession();
+    const token = session?.access_token;
 
-  console.log('Sending request to:', apiUrl);
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(process.env.REQUIRE_AUTH === 'true' && token && { 'Authorization': `Bearer ${token}` })
-    },
-    body: JSON.stringify({ question, conversationHistory: [] })
-  });
+    console.log('Sending request to:', apiUrl);
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(process.env.REQUIRE_AUTH === 'true' && token && { 'Authorization': `Bearer ${token}` })
+      },
+      body: JSON.stringify({ question, conversationHistory: [] })
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Fetch Error:', { status: response.status, errorText });
-    throw new Error(`Failed to fetch answer: ${response.status} - ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Fetch Error:', { status: response.status, errorText });
+      throw new Error(`Failed to fetch answer: ${response.status} - ${errorText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    throw error; // Re-throw to be caught by caller
   }
-  return await response.json();
 }
 
 // UI Functions
@@ -222,16 +245,21 @@ async function shareSession() {
 // Event Listeners
 startBtn.addEventListener('click', () => {
   if (!isListening) {
-    recognition.start();
-    isListening = true;
-    status.textContent = 'Listening...';
-    showWaveform();
-    questionSpan.textContent = '';
-    answerSpan.textContent = '';
-    liveTranscript.textContent = '';
-    feedback.textContent = '';
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
+    try {
+      recognition.start();
+      isListening = true;
+      status.textContent = 'Listening...';
+      showWaveform();
+      questionSpan.textContent = '';
+      answerSpan.textContent = '';
+      liveTranscript.textContent = '';
+      feedback.textContent = '';
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+    } catch (error) {
+      console.error('Start error:', error);
+      status.textContent = 'Failed to start listening.';
+    }
   }
 });
 
@@ -240,18 +268,22 @@ stopBtn.addEventListener('click', () => {
 });
 
 function stopListening() {
-  recognition.stop();
-  isListening = false;
-  status.textContent = 'Stopped listening';
-  hideWaveform();
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
+  try {
+    recognition.stop();
+    isListening = false;
+    status.textContent = 'Stopped listening';
+    hideWaveform();
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  } catch (error) {
+    console.error('Stop error:', error);
+  }
 }
 
 languageSelect.addEventListener('change', () => {
   recognition.lang = languageSelect.value;
   if (isListening) {
-    recognition.stop();
+    stopListening();
     setTimeout(() => {
       if (isListening) recognition.start();
     }, 100);
@@ -266,5 +298,10 @@ downloadBtn.addEventListener('click', downloadSession);
 shareBtn.addEventListener('click', shareSession);
 
 // Initialize
-initializeSpeechRecognition();
-updateHistory();
+try {
+  initializeSpeechRecognition();
+  updateHistory();
+} catch (error) {
+  console.error('Initialization error:', error);
+  status.textContent = 'Failed to initialize.';
+}

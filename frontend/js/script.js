@@ -37,9 +37,9 @@ const questions = {
   behavioral: ['Tell me about a time you faced a challenge.', 'How do you handle stress?']
 };
 
-// Wait for Supabase initialization
+// Wait for Supabase initialization with timeout
 function initializeSupabase() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const checkSupabase = setInterval(() => {
       if (window.supabase && typeof window.supabase.auth.getSession === 'function') {
         clearInterval(checkSupabase);
@@ -49,6 +49,11 @@ function initializeSupabase() {
         console.log('Waiting for Supabase initialization...');
       }
     }, 100);
+    setTimeout(() => {
+      clearInterval(checkSupabase);
+      console.error('Supabase initialization timed out');
+      reject(new Error('Supabase initialization timed out'));
+    }, 10000); // 10-second timeout
   });
 }
 
@@ -56,7 +61,12 @@ function initializeSupabase() {
 async function initializeSpeechRecognition() {
   try {
     console.log('Initializing SpeechRecognition...');
-    await initializeSupabase(); // Wait for Supabase
+    try {
+      await initializeSupabase(); // Wait for Supabase with timeout
+    } catch (supabaseError) {
+      console.error('Supabase error, proceeding without auth:', supabaseError.message);
+      status.textContent = 'Warning: Supabase not initialized. Some features may be limited.';
+    }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       console.error('SpeechRecognition API not supported in this browser.');
@@ -101,9 +111,11 @@ async function initializeSpeechRecognition() {
           answerSpan.textContent = answer || 'No answer generated.';
           renderRating();
           currentSession = { question: selectedQuestion, userAnswer: finalTranscript, aiAnswer: answer, feedback: feedbackData, timestamp: new Date().toISOString() };
-          saveSession(selectedQuestion, finalTranscript, answer, feedbackData);
+          if (window.supabase) {
+            saveSession(selectedQuestion, finalTranscript, answer, feedbackData);
+            updateHistory();
+          }
           displayFeedback(feedbackData);
-          updateHistory();
         } catch (error) {
           console.error('API Error:', error);
           answerSpan.textContent = 'Error fetching answer: ' + (error.message || 'Unknown error');
@@ -160,32 +172,38 @@ async function getAnswer(question) {
     const apiUrl = 'https://interviewsassist.netlify.app/.netlify/functions/getanswer';
 
     // Check if Supabase is available
-    if (!window.supabase || typeof window.supabase.auth.getSession !== 'function') {
-      console.error('Supabase not initialized');
-      throw new Error('Supabase authentication is not available');
+    if (window.supabase && typeof window.supabase.auth.getSession === 'function') {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      const token = session?.access_token;
+      console.log('Sending request to:', apiUrl, 'with token:', !!token);
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(process.env.REQUIRE_AUTH === 'true' && token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify({ question, conversationHistory: [] })
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Fetch Error:', { status: response.status, errorText });
+        throw new Error(`Failed to fetch answer: ${response.status} - ${errorText}`);
+      }
+      return await response.json();
+    } else {
+      console.warn('Supabase not available, sending request without auth');
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, conversationHistory: [] })
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Fetch Error:', { status: response.status, errorText });
+        throw new Error(`Failed to fetch answer: ${response.status} - ${errorText}`);
+      }
+      return await response.json();
     }
-
-    const { data: { session } } = await window.supabase.auth.getSession();
-    const token = session?.access_token;
-
-    console.log('Sending request to:', apiUrl, 'with token:', !!token);
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(process.env.REQUIRE_AUTH === 'true' && token && { 'Authorization': `Bearer ${token}` })
-      },
-      body: JSON.stringify({ question, conversationHistory: [] })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Fetch Error:', { status: response.status, errorText });
-      throw new Error(`Failed to fetch answer: ${response.status} - ${errorText}`);
-    }
-    const data = await response.json();
-    console.log('API Response:', data);
-    return data;
   } catch (error) {
     throw error;
   }
@@ -207,7 +225,7 @@ function renderRating() {
       for (let i = 0; i < value; i++) stars[i].classList.add('filled');
       if (currentSession) {
         currentSession.rating = value;
-        saveSession(currentSession.question, currentSession.userAnswer, currentSession.aiAnswer, currentSession.feedback, value);
+        if (window.supabase) saveSession(currentSession.question, currentSession.userAnswer, currentSession.aiAnswer, currentSession.feedback, value);
       }
     });
   });
@@ -336,7 +354,7 @@ shareBtn.addEventListener('click', shareSession);
 try {
   console.log('Initializing application...');
   initializeSpeechRecognition();
-  updateHistory();
+  if (window.supabase) updateHistory();
 } catch (error) {
   console.error('Initialization error:', error);
   status.textContent = 'Failed to initialize: ' + error.message;

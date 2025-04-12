@@ -3,114 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Interview - Instant Interview Assistant</title>
-  <link rel="stylesheet" href="/css/base.css">
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="stylesheet" href="/css/live-interview.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
-  <script id="supabaseScript" src="/js/supabase.min.js"></script>
-  <style>
-    .spinner { display: none; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin-left: 10px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .waveform { display: none; width: 100px; height: 20px; background: repeating-linear-gradient(to right, #000 0, #000 10px, transparent 10px, transparent 20px); }
-  </style>
+  <title>Live Interview Assistant</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Load Supabase script first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" id="supabaseScript"></script>
+  <!-- Load auth.js next -->
+  <script src="js/auth.js" defer></script>
+  <!-- Load script.js last, deferred to ensure auth.js runs first -->
+  <script src="js/script.js" defer></script>
 </head>
 <body>
-  <div class="main-content">
-    <div class="container">
-      <header class="header">
-        <h1>Live Interview Copilot</h1>
-        <p class="subtitle">Your AI-powered assistant for seamless interview preparation.</p>
-      </header>
-      <div class="controls">
-        <div class="control-group">
-          <button id="startBtn" class="action-btn">Start Listening</button>
-          <button id="stopBtn" class="action-btn" disabled>Stop Listening</button>
-        </div>
-        <select id="language" class="input-field">
-          <option value="en-US">English</option>
-          <option value="es-ES">Spanish</option>
-          <option value="fr-FR">French</option>
-        </select>
-        <select id="questionSet" class="input-field">
-          <option value="">Pick a Category</option>
-          <option value="tech">Tech</option>
-          <option value="hr">HR</option>
-          <option value="behavioral">Behavioral</option>
-        </select>
-        <input type="text" id="customQuestion" class="input-field" placeholder="Type a question">
-      </div>
-      <div class="status-bar">
-        <p id="status">Click "Start Listening" to begin.</p>
-        <div class="waveform" id="waveform"></div>
-      </div>
-      <div class="live-transcript-box">
-        <p id="liveTranscript" class="live-transcript"></p>
-      </div>
-      <div class="output">
-        <div class="output-card">
-          <p><strong>Question:</strong> <span id="question"></span></p>
-          <p><strong>Answer:</strong> <span id="answer"></span> <span class="spinner" id="spinner"></span></p>
-          <div class="rating" id="rating"></div>
-          <p id="feedback" class="feedback"></p>
-        </div>
-      </div>
-      <div class="history-section">
-        <h3>Session History</h3>
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Question</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="historyLog" class="history-log"></tbody>
-        </table>
-        <div class="history-actions">
-          <button id="downloadBtn" class="table-btn">Download Session</button>
-          <button id="shareBtn" class="table-btn">Share Session</button>
-        </div>
-      </div>
-    </div>
+  <div class="container">
+    <h1>Live Interview Assistant</h1>
+    <div id="status">Ready</div>
+    <button id="startBtn">Start Listening</button>
+    <button id="stopBtn" disabled>Stop Listening</button>
+    <select id="language">
+      <option value="en-US">English (US)</option>
+      <option value="en-GB">English (UK)</option>
+      <option value="es-ES">Spanish</option>
+    </select>
+    <select id="questionSet">
+      <option value="">Custom Question</option>
+      <option value="tech">Technical</option>
+      <option value="hr">HR</option>
+      <option value="behavioral">Behavioral</option>
+    </select>
+    <input type="text" id="customQuestion" placeholder="Enter custom question">
+    <div id="liveTranscript">Transcript will appear here...</div>
+    <div id="question">Question will appear here...</div>
+    <div id="answer">Answer will appear here...</div>
+    <div id="feedback">Feedback will appear here...</div>
+    <div id="spinner" style="display: none;">Loading...</div>
+    <canvas id="waveform" style="display: none;"></canvas>
+    <div id="rating"></div>
+    <table id="historyLog">
+      <thead><tr><th>Question</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="downloadBtn">Download Session</button>
+    <button id="shareBtn">Share Session</button>
   </div>
-
-  <!-- JavaScript -->
-  <script src="/js/auth.js"></script>
-  <script src="/js/ui.js"></script>
-  <script src="/js/ai.js"></script>
-  <script src="/js/storage.js"></script>
-  <script src="/js/utils.js"></script>
-  <script src="/js/script.js"></script>
-  <script>
-    console.log('live-interview.html script loaded');
-
-    // Temporarily comment out service worker to test
-    /*
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('Service worker registered'))
-        .catch(err => console.error('Service worker registration failed:', err));
-    }
-    */
-
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM fully loaded in live-interview.html');
-
-      // Back to Dashboard button
-      const backBtn = document.createElement('button');
-      backBtn.textContent = 'Back to Dashboard';
-      backBtn.className = 'action-btn';
-      backBtn.style.position = 'fixed';
-      backBtn.style.top = '20px';
-      backBtn.style.left = '20px';
-      backBtn.addEventListener('click', () => {
-        window.location.href = '/dashboard.html';
-      });
-      document.body.appendChild(backBtn);
-    });
-  </script>
 </body>
 </html>

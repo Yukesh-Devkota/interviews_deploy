@@ -1,79 +1,79 @@
-const CACHE_NAME = 'interview-assistant-cache-v1';
+// Service Worker
+const CACHE_NAME = 'interview-assist-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/login.html',
   '/dashboard.html',
   '/css/styles.css',
-  '/css/index.css',
-  '/js/ui.js',
+  '/css/base.css',
+  '/css/dashboard.css',
+  '/js/supabase.min.js',
   '/js/auth.js',
-  '/manifest.json'
-  // '/favicon.ico' // Uncomment if you add it to frontend/
+  '/js/ui.js',
+  '/js/storage.js',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('Opened cache');
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        urlsToCache.map((url) => {
-          return cache.add(url).catch((error) => {
-            console.error(`Failed to cache ${url}:`, error);
-          });
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
         })
-      ).then(() => {
-        console.log('Caching complete');
-      });
-    }).catch((error) => {
-      console.error('Cache setup failed:', error);
+      );
     })
   );
 });
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        console.log(`Serving ${event.request.url} from cache`);
-        return response;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (event.request.url.startsWith('http')) {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
+    caches.match(event.request)
+      .then((response) => {
+        // Return cached response if available
+        if (response) {
+          console.log(`Serving ${event.request.url} from cache`);
+          return response;
+        }
+
+        // Clone the request to avoid modifying the original
+        const fetchRequest = event.request.clone();
+
+        // Only fetch and cache GET requests
+        if (fetchRequest.method === 'GET') {
+          return fetch(fetchRequest).then((fetchResponse) => {
+            // Check if we received a valid response
+            if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+              return fetchResponse;
+            }
+
+            // Clone the response to avoid modifying the original
+            const responseToCache = fetchResponse.clone();
+
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+
+            return fetchResponse;
           });
         }
-        return networkResponse;
-      }).catch((error) => {
-        console.error('Fetch failed for:', event.request.url, error);
-        if (event.request.url.includes('favicon.ico')) {
-          return new Response('', { status: 404, statusText: 'Not Found' });
-        }
-        return new Response('Offline: Network error occurred', {
-          status: 503,
-          statusText: 'Service Unavailable'
-        });
-      });
-    })
-  );
-});
 
-self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            console.log(`Deleting old cache: ${cacheName}`);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      console.log('Cache cleanup complete');
-    })
+        // For non-GET requests (e.g., POST), fetch directly without caching
+        return fetch(fetchRequest);
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error);
+        // Optionally return a fallback response for offline mode
+        return caches.match('/dashboard.html');
+      })
   );
 });

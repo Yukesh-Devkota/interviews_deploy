@@ -6,33 +6,47 @@ let isAuthInitialized = false;
 async function waitForSupabaseScript(timeout = 10000) {
   const supabaseScript = document.getElementById('supabaseScript');
   if (!supabaseScript) {
-    console.error('Supabase script not found');
+    console.error('Supabase script element not found in DOM');
     throw new Error('Supabase script not found');
   }
   return new Promise((resolve, reject) => {
     if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
       console.log('Supabase already available');
       resolve();
+    } else {
+      const checkInterval = setInterval(() => {
+        if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+          clearInterval(checkInterval);
+          console.log('Supabase script loaded successfully');
+          resolve();
+        }
+      }, 100);
+      supabaseScript.addEventListener('load', () => {
+        console.log('Supabase script load event triggered');
+        clearInterval(checkInterval);
+        resolve();
+      });
+      supabaseScript.addEventListener('error', () => {
+        console.error('Supabase script failed to load');
+        clearInterval(checkInterval);
+        reject(new Error('Supabase script failed to load'));
+      });
+      setTimeout(() => {
+        console.error('Supabase script load timed out');
+        clearInterval(checkInterval);
+        reject(new Error('Supabase script load timed out'));
+      }, timeout);
     }
-    supabaseScript.addEventListener('load', () => {
-      console.log('Supabase script loaded');
-      resolve();
-    });
-    supabaseScript.addEventListener('error', () => {
-      console.error('Supabase script failed to load');
-      reject(new Error('Supabase script failed to load'));
-    });
-    setTimeout(() => {
-      console.error('Supabase script load timed out');
-      reject(new Error('Supabase script load timed out'));
-    }, timeout);
   });
 }
 
 async function initializeSupabase() {
   console.log('Initializing Supabase...');
   try {
-    window.supabase = supabase = supabase.createClient(
+    if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
+      throw new Error('Supabase library not available');
+    }
+    window.supabase = supabase = window.supabase.createClient(
       'https://fadrnmgjulvdoymevqhf.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZHJubWdqdWx2ZG95bWV2cWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5OTA3NzEsImV4cCI6MjA1ODU2Njc3MX0.XvyVNkjvTiVA5i0Abs1WIIhY-5i9fXfoxMrgIiuoOsA'
     );
@@ -82,7 +96,7 @@ async function initializeAuth() {
 
   } catch (error) {
     console.error('Auth init failed:', error.message);
-    showFeedback('loginError', 'Auth unavailable. Refresh the page.');
+    showFeedback('loginError', 'Auth unavailable. Please refresh the page or check your connection.');
   }
 }
 
@@ -153,7 +167,7 @@ function handleAuthForms() {
         } else {
           showFeedback('signupError', 'Signup successful! Check your email to confirm.');
           document.getElementById('signupForm').style.display = 'none';
-          document.getElementById('loginForm').style.display = 'block';
+          document.getElementById('login.html').style.display = 'block';
           document.getElementById('loginForm').classList.add('active');
           document.getElementById('signupForm').classList.remove('active');
         }
